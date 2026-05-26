@@ -20,6 +20,8 @@ const emptyDefaults: ResumeProfileFormData = {
   education: [],
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function ResumePage() {
   const profile = await getResumeProfile();
   const defaultValues = profile ? toResumeFormData(profile) : emptyDefaults;

@@ -1,17 +1,46 @@
 # Job Finder
 
-Track job applications with a pipeline Sankey diagram and build a resume with PDF download.
+Track job applications with a pipeline Sankey diagram and build a resume with PDF download. Roadmap: **multi-tenant SaaS** on PostgreSQL (free tier now, Stripe Pro later).
 
-## Local setup
+## Documentation
+
+| Doc | Description |
+|-----|-------------|
+| [docs/PLAN.md](docs/PLAN.md) | Master phase list and route map |
+| [docs/SAAS.md](docs/SAAS.md) | SaaS direction, Postgres, auth/billing decisions |
+| [docs/DATABASE.md](docs/DATABASE.md) | **Prisma Postgres** setup (Vercel + local) |
+| [docs/AGENT.md](docs/AGENT.md) | One-phase-per-chat playbook |
+| [docs/phases/](docs/phases/) | Checklists for phases 6–12 |
+
+**Next implementation step:** [Phase 7 — Auth & tenancy](docs/phases/phase-07-auth-tenancy.md)
+
+## Local setup (Prisma Postgres)
+
+Uses the same database as Vercel (no Docker required). Full steps: [docs/DATABASE.md](docs/DATABASE.md).
+
+### 1. Vercel + Prisma Postgres
+
+1. Vercel project → **Storage** → **Create Database** → **Prisma Postgres**.
+2. **Storage** → your DB → **Connect** → select this project (`DATABASE_URL` is set automatically).
+3. [Prisma Console](https://console.prisma.io/) → copy **direct** URL → add as `DIRECT_URL` in Vercel env vars.
+
+### 2. Local `.env`
+
+```bash
+cp .env.example .env
+```
+
+Paste `DATABASE_URL` and `DIRECT_URL` from Vercel / Prisma Console into `.env`.
+
+### 3. App
 
 ```bash
 npm install
-cp .env.example .env
-npm run db:migrate
+npm run db:migrate:deploy   # once: create tables
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — home redirects to `/pipeline`.
+Open [http://localhost:3000](http://localhost:3000). Health: `GET /api/health`.
 
 ### Scripts
 
@@ -20,31 +49,30 @@ Open [http://localhost:3000](http://localhost:3000) — home redirects to `/pipe
 | `npm run dev` | Start dev server |
 | `npm run build` | Production build |
 | `npm run db:generate` | Regenerate Prisma client |
-| `npm run db:migrate` | Run migrations (dev) |
+| `npm run db:migrate` | Create migrations locally (`migrate dev`) |
+| `npm run db:migrate:deploy` | Apply migrations (prod / first setup) |
 | `npm run db:studio` | Open Prisma Studio |
-
-### Health check
-
-`GET /api/health` — returns `{ ok: true, db: "connected" }` when SQLite is reachable.
 
 ## Routes
 
-- `/pipeline` — job application pipeline (Phase 1+)
-- `/resume` — resume builder (Phase 3–4)
+- `/pipeline` — job application pipeline
+- `/pipeline/analytics` — Sankey flow
+- `/resume` — resume builder + PDF
 
-See [docs/PLAN.md](docs/PLAN.md) for the full phased roadmap.
+Full route map: [docs/PLAN.md](docs/PLAN.md).
 
 ## Deploy to Vercel
 
-1. Push this repo to GitHub.
-2. Import the project in [Vercel](https://vercel.com/new).
-3. Set `DATABASE_URL` in project settings when you add models (Phase 1+).
+1. Push to GitHub and import on [Vercel](https://vercel.com/new).
+2. **Storage** → **Prisma Postgres** → **Connect** to the project.
+3. Set `DIRECT_URL` (direct connection from Prisma Console) if not present.
+4. Run migrations once locally: `npm run db:migrate:deploy` (or add `prisma migrate deploy &&` to the build script).
+5. Redeploy and check `GET /api/health`.
 
-**Note:** SQLite on the filesystem does not persist on Vercel serverless. Phase 0 deploys as a shell; before storing real data in production, switch to [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres) or [Turso](https://turso.tech/).
-
-Build command: `npm run build` (runs `prisma generate` via `postinstall`).
+`prisma generate` runs via `postinstall`.
 
 ## Tech
 
 - Next.js 16, React 19, MUI (Material UI)
-- Prisma 7 + SQLite (`better-sqlite3` adapter)
+- Prisma 7 + **Prisma Postgres** (`@prisma/adapter-pg`)
+- SaaS phases: Auth.js (7), Stripe (11) — see [docs/SAAS.md](docs/SAAS.md)

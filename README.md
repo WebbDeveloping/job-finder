@@ -46,5 +46,5 @@ Build command: `npm run build` (runs `prisma generate` via `postinstall`).
 
 ## Tech
 
-- Next.js 16, React 19, Tailwind CSS 4
+- Next.js 16, React 19, MUI (Material UI)
 - Prisma 7 + SQLite (`better-sqlite3` adapter)

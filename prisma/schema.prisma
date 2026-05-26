@@ -8,3 +8,39 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+enum Stage {
+  Saved
+  Applied
+  Recruiter
+  Technical
+  Onsite
+  Offer
+  Rejected
+  Withdrawn
+  Accepted
+}
+
+model Application {
+  id          String       @id @default(cuid())
+  company     String
+  role        String
+  source      String?
+  notes       String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  stageEvents StageEvent[]
+}
+
+model StageEvent {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  fromStage     Stage?
+  toStage       Stage
+  timestamp     DateTime
+  createdAt     DateTime    @default(now())
+
+  @@index([applicationId])
+  @@index([timestamp])
+}

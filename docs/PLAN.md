@@ -9,7 +9,7 @@ Personal app to track software job applications (Sankey pipeline) and build a re
 | **0** | Done | Next.js shell, nav (`/pipeline`, `/resume`), Prisma + SQLite stub, health check |
 | **1** | Done | `Application` + `StageEvent` models, pipeline CRUD |
 | **2** | Done | Sankey diagram from stage events |
-| **3** | Pending | Resume profile editor |
+| **3** | Done | Resume profile editor |
 | **4** | Pending | Resume PDF download |
 | **5** | Pending | Polish (empty states, mobile, production DB) |
 

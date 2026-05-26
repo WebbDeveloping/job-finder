@@ -10,7 +10,7 @@ Personal app to track software job applications (Sankey pipeline) and build a re
 | **1** | Done | `Application` + `StageEvent` models, pipeline CRUD |
 | **2** | Done | Sankey diagram from stage events |
 | **3** | Done | Resume profile editor |
-| **4** | Pending | Resume PDF download |
+| **4** | Done | Resume PDF download |
 | **5** | Pending | Polish (empty states, mobile, production DB) |
 
 ## Default pipeline stages (Phase 1+)

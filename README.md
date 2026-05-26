@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Job Finder
 
-## Getting Started
+Track job applications with a pipeline Sankey diagram and build a resume with PDF download.
 
-First, run the development server:
+## Local setup
 
 ```bash
+npm install
+cp .env.example .env
+npm run db:migrate
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) — home redirects to `/pipeline`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server |
+| `npm run build` | Production build |
+| `npm run db:generate` | Regenerate Prisma client |
+| `npm run db:migrate` | Run migrations (dev) |
+| `npm run db:studio` | Open Prisma Studio |
 
-## Learn More
+### Health check
 
-To learn more about Next.js, take a look at the following resources:
+`GET /api/health` — returns `{ ok: true, db: "connected" }` when SQLite is reachable.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Routes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `/pipeline` — job application pipeline (Phase 1+)
+- `/resume` — resume builder (Phase 3–4)
 
-## Deploy on Vercel
+See [docs/PLAN.md](docs/PLAN.md) for the full phased roadmap.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploy to Vercel
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push this repo to GitHub.
+2. Import the project in [Vercel](https://vercel.com/new).
+3. Set `DATABASE_URL` in project settings when you add models (Phase 1+).
+
+**Note:** SQLite on the filesystem does not persist on Vercel serverless. Phase 0 deploys as a shell; before storing real data in production, switch to [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres) or [Turso](https://turso.tech/).
+
+Build command: `npm run build` (runs `prisma generate` via `postinstall`).
+
+## Tech
+
+- Next.js 16, React 19, Tailwind CSS 4
+- Prisma 7 + SQLite (`better-sqlite3` adapter)

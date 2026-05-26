@@ -4,9 +4,11 @@ import { NextMuiLink } from "@/components/NextMuiLink";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { SankeyFilters } from "@/components/pipeline/SankeyFilters";
 import { SankeyPanel } from "@/components/pipeline/SankeyPanel";
 import { aggregateSankeyGraph } from "@/lib/sankey/aggregate";
+import { requireUserId } from "@/lib/auth";
 import {
   fetchStageEventsWithSource,
   getApplicationsByIds,
@@ -27,12 +29,13 @@ export const dynamic = "force-dynamic";
 export default async function PipelineAnalyticsPage({
   searchParams,
 }: AnalyticsPageProps) {
+  const userId = await requireUserId();
   const params = await searchParams;
   const filters = parseSankeyFilters(params);
 
   const [events, sources] = await Promise.all([
-    fetchStageEventsWithSource(),
-    listDistinctSources(),
+    fetchStageEventsWithSource(userId),
+    listDistinctSources(userId),
   ]);
 
   const graph = aggregateSankeyGraph(events, filters);
@@ -44,7 +47,9 @@ export default async function PipelineAnalyticsPage({
     }
   }
 
-  const applications = await getApplicationsByIds([...allApplicationIds]);
+  const applications = await getApplicationsByIds(userId, [
+    ...allApplicationIds,
+  ]);
   const applicationsById = Object.fromEntries(
     applications.map((app) => [app.id, app]),
   );
@@ -86,20 +91,18 @@ export default async function PipelineAnalyticsPage({
       {!hasAnyEvents ? (
         <Paper
           variant="outlined"
-          sx={{
-            mt: 6,
-            py: 6,
-            px: 3,
-            textAlign: "center",
-            borderStyle: "dashed",
-          }}
+          sx={{ mt: 6, py: 6, px: 3, borderStyle: "dashed" }}
         >
-          <Typography color="text.secondary">
-            No stage events yet. Log changes on an application to see flow here.
-          </Typography>
-          <NextLinkButton href="/pipeline" sx={{ mt: 2 }}>
-            Go to pipeline
-          </NextLinkButton>
+          <EmptyState
+            illustrationSrc="/illustrations/empty-pipeline.svg"
+            title="No stage events yet"
+            description="Log stage changes on an application to visualize your funnel here."
+            action={
+              <NextLinkButton href="/pipeline" variant="contained">
+                Go to pipeline
+              </NextLinkButton>
+            }
+          />
         </Paper>
       ) : (
         <SankeyPanel graph={graph} applicationsById={applicationsById} />

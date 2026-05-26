@@ -1,6 +1,6 @@
 # Phase 7 — Auth and multi-tenant data
 
-**Status:** Pending  
+**Status:** Done  
 **Depends on:** Phase 6 (PostgreSQL)  
 **Blocks:** Phase 8+
 
@@ -19,7 +19,7 @@ Users sign up and sign in. All pipeline, analytics, and resume data is **scoped 
 ## Auth stack
 
 - **Auth.js** v5 (`next-auth` / `@auth/prisma-adapter`)
-- Session strategy: database sessions (Prisma adapter) or JWT — pick one and document in commit
+- Session strategy: **JWT** (required for Credentials + Prisma adapter; users stored in Postgres)
 - Providers (minimum): **Credentials** or **Email** (magic link); optional: Google, GitHub
 
 Env vars (add to `.env.example`):
@@ -78,7 +78,7 @@ model ResumeProfile {
 
 ## Middleware
 
-- [ ] `src/middleware.ts` — protect:
+- [x] `src/proxy.ts` (Next.js 16; was `middleware.ts`) — protect:
   - `/pipeline`, `/pipeline/*`
   - `/resume`, `/resume/*`
   - `/api/resume/pdf` (private PDF)

@@ -9,8 +9,8 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import type { ResumeActionState } from "@/app/resume/actions";
-import { saveResumeProfile } from "@/app/resume/actions";
+import type { ResumeActionState } from "@/app/(app)/resume/actions";
+import { saveResumeProfile } from "@/app/(app)/resume/actions";
 import {
   EMPTY_EDUCATION,
   EMPTY_EXPERIENCE,

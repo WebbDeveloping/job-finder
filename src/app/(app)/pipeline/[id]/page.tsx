@@ -7,6 +7,7 @@ import { ApplicationForm } from "@/components/pipeline/ApplicationForm";
 import { StageChangeForm } from "@/components/pipeline/StageChangeForm";
 import { StageHistory } from "@/components/pipeline/StageHistory";
 import { getApplication, getCurrentStage } from "@/lib/application";
+import { requireUserId } from "@/lib/auth";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -15,8 +16,9 @@ type PageProps = {
 export const dynamic = "force-dynamic";
 
 export default async function ApplicationDetailPage({ params }: PageProps) {
+  const userId = await requireUserId();
   const { id } = await params;
-  const application = await getApplication(id);
+  const application = await getApplication(id, userId);
 
   if (!application) {
     notFound();

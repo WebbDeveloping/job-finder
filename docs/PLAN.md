@@ -27,8 +27,8 @@ Track job applications (Sankey pipeline) and build a resume with PDF download. E
 | Phase | Status | Doc | Scope |
 |-------|--------|-----|--------|
 | **6** | Done | [phase-06-postgres](./phases/phase-06-postgres.md) | Migrate to **PostgreSQL**; remove SQLite adapter |
-| **7** | Pending | [phase-07-auth-tenancy](./phases/phase-07-auth-tenancy.md) | Auth.js, `userId` on all tenant data |
-| **8** | Pending | [phase-08-saas-shell](./phases/phase-08-saas-shell.md) | Landing, settings, onboarding, delete account |
+| **7** | Done | [phase-07-auth-tenancy](./phases/phase-07-auth-tenancy.md) | Auth.js, `userId` on all tenant data |
+| **8** | Done | [phase-08-saas-shell](./phases/phase-08-saas-shell.md) | Landing, settings, onboarding, delete account |
 | **9** | Pending | [phase-09-polish](./phases/phase-09-polish.md) | Mobile, empty states, a11y, SEO |
 | **10** | Pending | [phase-10-public](./phases/phase-10-public.md) | Privacy/terms, opt-in public resume `/r/[slug]` |
 | **11** | Pending | [phase-11-billing](./phases/phase-11-billing.md) | Stripe Free / Pro |
@@ -49,27 +49,28 @@ Terminals: `Rejected`, `Withdrawn`, `Accepted`
 - Auth.js + Prisma adapter (Phase 7+)
 - Stripe (Phase 11+)
 
-## Routes (current — pre–Phase 7)
+## Routes (current — after Phase 8)
 
 | Route | Access | Notes |
 |-------|--------|--------|
-| `/` | Public | Redirects to `/pipeline` today; landing in Phase 8 |
-| `/pipeline` | Open | → auth required Phase 7 |
-| `/pipeline/analytics` | Open | Sankey |
-| `/pipeline/new` | Open | Create application |
-| `/pipeline/[id]` | Open | Detail + stage history |
-| `/resume` | Open | Resume builder |
+| `/` | Public | Marketing landing; signed-in → `/dashboard` |
+| `/privacy`, `/terms` | Public | Placeholder legal pages |
+| `/login`, `/signup` | Public | Credentials auth |
+| `/dashboard` | Authenticated | Overview + quick actions |
+| `/pipeline` | Authenticated | List applications |
+| `/pipeline/analytics` | Authenticated | Sankey |
+| `/pipeline/new` | Authenticated | Create application |
+| `/pipeline/[id]` | Authenticated | Detail + stage history (owner only) |
+| `/resume` | Authenticated | Resume builder |
+| `/settings` | Authenticated | Profile, delete account |
 | `/api/health` | Public | DB check |
-| `/api/resume/pdf` | Open | → auth required Phase 7 |
+| `/api/auth/*` | Public | Auth.js handlers |
+| `/api/resume/pdf` | Authenticated | Resume PDF download |
 
-### Routes (target — after SaaS phases)
+### Routes (future SaaS phases)
 
 | Route | Access |
 |-------|--------|
-| `/` | Public landing |
-| `/login`, `/signup` | Public |
-| `/privacy`, `/terms` | Public |
-| `/pipeline`, `/resume`, `/settings` | Authenticated |
 | `/settings/billing` | Authenticated (Phase 11) |
 | `/r/[slug]` | Public if resume published (Phase 10) |
 

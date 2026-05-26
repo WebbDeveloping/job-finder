@@ -6,8 +6,6 @@ import type {
   ResumeProfileFormData,
 } from "@/lib/resume-types";
 
-export const RESUME_PROFILE_ID = "default";
-
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -200,19 +198,22 @@ export function toResumeFormData(profile: ResumeProfile): ResumeProfileFormData 
   };
 }
 
-export async function getResumeProfile(): Promise<ResumeProfile | null> {
+export async function getResumeProfile(
+  userId: string,
+): Promise<ResumeProfile | null> {
   return prisma.resumeProfile.findUnique({
-    where: { id: RESUME_PROFILE_ID },
+    where: { userId },
   });
 }
 
 export async function upsertResumeProfile(
+  userId: string,
   data: ResumeProfileFormData,
 ): Promise<ResumeProfile> {
   return prisma.resumeProfile.upsert({
-    where: { id: RESUME_PROFILE_ID },
+    where: { userId },
     create: {
-      id: RESUME_PROFILE_ID,
+      userId,
       fullName: data.fullName.trim(),
       email: data.email.trim(),
       phone: data.phone,

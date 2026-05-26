@@ -11,8 +11,9 @@ Track job applications with a pipeline Sankey diagram and build a resume with PD
 | [docs/DATABASE.md](docs/DATABASE.md) | **Prisma Postgres** setup (Vercel + local) |
 | [docs/AGENT.md](docs/AGENT.md) | One-phase-per-chat playbook |
 | [docs/phases/](docs/phases/) | Checklists for phases 6–12 |
+| [docs/ASSETS.md](docs/ASSETS.md) | Icons & illustration licenses |
 
-**Next implementation step:** [Phase 7 — Auth & tenancy](docs/phases/phase-07-auth-tenancy.md)
+**Next implementation step:** [Phase 9 — Polish](docs/phases/phase-09-polish.md)
 
 ## Local setup (Prisma Postgres)
 
@@ -55,11 +56,20 @@ Open [http://localhost:3000](http://localhost:3000). Health: `GET /api/health`.
 
 ## Routes
 
+- `/` — marketing landing (public)
+- `/login`, `/signup` — account access
+- `/privacy`, `/terms` — legal placeholders
+- `/dashboard` — signed-in home overview
 - `/pipeline` — job application pipeline
 - `/pipeline/analytics` — Sankey flow
 - `/resume` — resume builder + PDF
+- `/settings` — profile and account
 
 Full route map: [docs/PLAN.md](docs/PLAN.md).
+
+## Auth rate limiting (production)
+
+Protect `/api/auth/*` on Vercel with **Firewall** rules or an edge rate limiter (e.g. Upstash). A simple starting point: limit sign-in/sign-up POSTs per IP in the Vercel dashboard under **Security → Firewall**.
 
 ## Deploy to Vercel
 

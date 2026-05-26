@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { Stage } from "@/generated/prisma/client";
 import { getApplication, getCurrentStage } from "@/lib/application";
+import { requireUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ALL_STAGES } from "@/lib/stages";
 
@@ -56,6 +57,8 @@ export async function createApplication(
   _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const userId = await requireUserId();
+
   const company = requireField(formData.get("company"), "Company");
   if (typeof company !== "string") return company;
 
@@ -67,6 +70,7 @@ export async function createApplication(
 
   const application = await prisma.application.create({
     data: {
+      userId,
       company,
       role,
       source,
@@ -82,6 +86,7 @@ export async function createApplication(
   });
 
   revalidatePath("/pipeline");
+  revalidatePath("/dashboard");
   redirect(`/pipeline/${application.id}`);
 }
 
@@ -90,6 +95,8 @@ export async function updateApplication(
   _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const userId = await requireUserId();
+
   const company = requireField(formData.get("company"), "Company");
   if (typeof company !== "string") return company;
 
@@ -99,7 +106,7 @@ export async function updateApplication(
   const source = trimOptional(formData.get("source"));
   const notes = trimOptional(formData.get("notes"));
 
-  const existing = await getApplication(id);
+  const existing = await getApplication(id, userId);
   if (!existing) {
     return { error: "Application not found." };
   }
@@ -119,6 +126,8 @@ export async function logStageChange(
   _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const userId = await requireUserId();
+
   const expectedFromStage = formData.get("expectedFromStage");
   if (expectedFromStage === null || typeof expectedFromStage !== "string") {
     return { error: "Current stage is missing." };
@@ -130,7 +139,7 @@ export async function logStageChange(
   const timestamp = parseTimestamp(formData.get("timestamp"));
   if (!(timestamp instanceof Date)) return timestamp;
 
-  const application = await getApplication(applicationId);
+  const application = await getApplication(applicationId, userId);
   if (!application) {
     return { error: "Application not found." };
   }

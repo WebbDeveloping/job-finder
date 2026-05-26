@@ -21,8 +21,62 @@ enum Stage {
   Accepted
 }
 
+model User {
+  id                   String    @id @default(cuid())
+  email                String    @unique
+  emailVerified        DateTime?
+  name                 String?
+  image                String?
+  passwordHash         String?
+  plan                 String    @default("free")
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  applications  Application[]
+  resumeProfile ResumeProfile?
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
 model Application {
   id          String       @id @default(cuid())
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   company     String
   role        String
   source      String?
@@ -30,6 +84,8 @@ model Application {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   stageEvents StageEvent[]
+
+  @@index([userId])
 }
 
 model StageEvent {
@@ -46,7 +102,9 @@ model StageEvent {
 }
 
 model ResumeProfile {
-  id         String   @id
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   fullName   String   @default("")
   email      String   @default("")
   phone      String?

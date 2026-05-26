@@ -1,12 +1,19 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import { getResumeProfile, toResumeFormData } from "@/lib/resume";
 import { generateResumePdf } from "@/lib/resume-pdf";
 
 export const runtime = "nodejs";
 
 export async function GET() {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
-    const profile = await getResumeProfile();
+    const profile = await getResumeProfile(userId);
     if (!profile) {
       return NextResponse.json(
         { error: "No saved resume profile. Save your resume first." },

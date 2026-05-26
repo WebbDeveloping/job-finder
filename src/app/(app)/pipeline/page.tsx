@@ -10,21 +10,33 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
+import { OnboardingBanner } from "@/components/app/OnboardingBanner";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { StageBadge } from "@/components/pipeline/StageBadge";
 import {
   getCurrentStage,
   getLastStageEventAt,
   listApplications,
 } from "@/lib/application";
+import { requireUserId } from "@/lib/auth";
+import { getResumeProfile } from "@/lib/resume";
 import { formatDateTime } from "@/lib/datetime";
 
 export const dynamic = "force-dynamic";
 
 export default async function PipelinePage() {
-  const applications = await listApplications();
+  const userId = await requireUserId();
+  const [applications, resume] = await Promise.all([
+    listApplications(userId),
+    getResumeProfile(userId),
+  ]);
 
   return (
     <Box>
+      <OnboardingBanner
+        hasApplications={applications.length > 0}
+        hasResume={resume !== null}
+      />
       <Stack
         direction={{ xs: "column", sm: "row" }}
         spacing={2}
@@ -58,16 +70,19 @@ export default async function PipelinePage() {
             mt: 6,
             py: 6,
             px: 3,
-            textAlign: "center",
             borderStyle: "dashed",
           }}
         >
-          <Typography color="text.secondary">
-            No applications yet. Add your first one to start tracking.
-          </Typography>
-          <NextLinkButton href="/pipeline/new" sx={{ mt: 2 }}>
-            Add application
-          </NextLinkButton>
+          <EmptyState
+            illustrationSrc="/illustrations/empty-pipeline.svg"
+            title="No applications yet"
+            description="Add your first role to start tracking stages and viewing analytics."
+            action={
+              <NextLinkButton href="/pipeline/new" variant="contained">
+                Add application
+              </NextLinkButton>
+            }
+          />
         </Paper>
       ) : (
         <TableContainer component={Paper} variant="outlined" sx={{ mt: 4 }}>

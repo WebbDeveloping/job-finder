@@ -5,11 +5,11 @@ import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import type { ActionState } from "@/app/pipeline/actions";
+import type { ActionState } from "@/app/(app)/pipeline/actions";
 import {
   createApplication,
   updateApplication,
-} from "@/app/pipeline/actions";
+} from "@/app/(app)/pipeline/actions";
 
 type ApplicationFormProps = {
   mode: "create" | "edit";

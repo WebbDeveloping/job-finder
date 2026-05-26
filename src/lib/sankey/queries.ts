@@ -6,10 +6,11 @@ import {
 } from "@/lib/sankey/aggregate";
 import type { SankeyFilters, SankeyGraph } from "@/lib/sankey/types";
 
-export async function fetchStageEventsWithSource(): Promise<
-  StageEventWithSource[]
-> {
+export async function fetchStageEventsWithSource(
+  userId: string,
+): Promise<StageEventWithSource[]> {
   return prisma.stageEvent.findMany({
+    where: { application: { userId } },
     include: {
       application: { select: { source: true } },
     },
@@ -18,15 +19,16 @@ export async function fetchStageEventsWithSource(): Promise<
 }
 
 export async function getSankeyGraph(
+  userId: string,
   filters: SankeyFilters = {},
 ): Promise<SankeyGraph> {
-  const events = await fetchStageEventsWithSource();
+  const events = await fetchStageEventsWithSource(userId);
   return aggregateSankeyGraph(events, filters);
 }
 
-export async function listDistinctSources(): Promise<string[]> {
+export async function listDistinctSources(userId: string): Promise<string[]> {
   const rows = await prisma.application.findMany({
-    where: { source: { not: null } },
+    where: { userId, source: { not: null } },
     select: { source: true },
     distinct: ["source"],
     orderBy: { source: "asc" },
@@ -38,12 +40,13 @@ export async function listDistinctSources(): Promise<string[]> {
 }
 
 export async function getApplicationsByIds(
+  userId: string,
   ids: string[],
 ): Promise<Pick<Application, "id" | "company" | "role" | "source">[]> {
   if (ids.length === 0) return [];
 
   return prisma.application.findMany({
-    where: { id: { in: ids } },
+    where: { userId, id: { in: ids } },
     select: { id: true, company: true, role: true, source: true },
     orderBy: { company: "asc" },
   });

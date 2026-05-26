@@ -32,8 +32,11 @@ export function getLastStageEventAt(events: StageEvent[]): Date | null {
 
 export { isTerminalStage };
 
-export async function listApplications(): Promise<ApplicationWithEvents[]> {
+export async function listApplications(
+  userId: string,
+): Promise<ApplicationWithEvents[]> {
   return prisma.application.findMany({
+    where: { userId },
     include: { stageEvents: true },
     orderBy: { updatedAt: "desc" },
   });
@@ -41,9 +44,10 @@ export async function listApplications(): Promise<ApplicationWithEvents[]> {
 
 export async function getApplication(
   id: string,
+  userId: string,
 ): Promise<ApplicationWithEvents | null> {
-  return prisma.application.findUnique({
-    where: { id },
+  return prisma.application.findFirst({
+    where: { id, userId },
     include: { stageEvents: true },
   });
 }

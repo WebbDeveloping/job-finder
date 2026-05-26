@@ -36,7 +36,7 @@ See [DATABASE.md](./DATABASE.md) for setup, migrations, and Vercel env vars.
 
 ## Auth decision (Phase 7+)
 
-**Default:** [Auth.js](https://authjs.dev/) (NextAuth v5) with **Prisma adapter** — sessions and users live in Postgres alongside app data.
+**Default:** [Auth.js](https://authjs.dev/) (NextAuth v5) with **Prisma adapter** — users live in Postgres; **JWT session strategy** with Credentials sign-in (Phase 7).
 
 Alternatives (document if you switch): Clerk, WorkOS. Do not mix two auth systems.
 
@@ -115,7 +115,8 @@ When scoping by user (Phase 7), update every file in this list:
 |------|------------|
 | `src/lib/application.ts` | `findMany`, `findUnique` |
 | `src/lib/sankey/queries.ts` | `stageEvent.findMany`, `application.findMany` |
-| `src/lib/resume.ts` | `resumeProfile` find/upsert (`RESUME_PROFILE_ID` removed) |
+| `src/lib/auth.ts` | `auth()`, `getCurrentUserId()`, `requireUserId()`, registration |
+| `src/lib/resume.ts` | `resumeProfile` find/upsert by `userId` |
 | `src/app/pipeline/actions.ts` | create, update, stage events |
 | `src/app/resume/actions.ts` | via `upsertResumeProfile` |
 | `src/app/api/resume/pdf/route.ts` | GET PDF |

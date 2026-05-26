@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { requireUserId } from "@/lib/auth";
 import {
   parseEducationJson,
   parseExperienceJson,
@@ -52,6 +53,8 @@ export async function saveResumeProfile(
   _prevState: ResumeActionState,
   formData: FormData,
 ): Promise<ResumeActionState> {
+  const userId = await requireUserId();
+
   const fullName = requireField(formData.get("fullName"), "Full name");
   if (typeof fullName !== "string") return fullName;
 
@@ -103,8 +106,9 @@ export async function saveResumeProfile(
   const validationError = validateResumeFormData(data);
   if (validationError) return validationError;
 
-  await upsertResumeProfile(data);
+  await upsertResumeProfile(userId, data);
 
   revalidatePath("/resume");
+  revalidatePath("/dashboard");
   return { success: true };
 }

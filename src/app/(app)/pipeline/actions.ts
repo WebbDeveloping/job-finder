@@ -192,6 +192,7 @@ export async function logStageChange(
   });
 
   revalidatePath("/pipeline");
+  revalidatePath("/dashboard");
   revalidatePath(`/pipeline/${applicationId}`);
   return {};
 }

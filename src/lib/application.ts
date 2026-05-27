@@ -12,28 +12,23 @@ export type ApplicationWithEvents = Application & {
   resume: Resume | null;
 };
 
+/** Most recently logged transition (createdAt), not the latest backdated "when" value. */
+function sortStageEventsByRecency(events: StageEvent[]): StageEvent[] {
+  return [...events].sort((a, b) => {
+    const createdDiff = b.createdAt.getTime() - a.createdAt.getTime();
+    if (createdDiff !== 0) return createdDiff;
+    return b.timestamp.getTime() - a.timestamp.getTime();
+  });
+}
+
 export function getCurrentStage(events: StageEvent[]): Stage {
   if (events.length === 0) return "Wishlist";
-
-  const sorted = [...events].sort((a, b) => {
-    const timeDiff = b.timestamp.getTime() - a.timestamp.getTime();
-    if (timeDiff !== 0) return timeDiff;
-    return b.createdAt.getTime() - a.createdAt.getTime();
-  });
-
-  return sorted[0]!.toStage;
+  return sortStageEventsByRecency(events)[0]!.toStage;
 }
 
 export function getLastStageEventAt(events: StageEvent[]): Date | null {
   if (events.length === 0) return null;
-
-  const sorted = [...events].sort((a, b) => {
-    const timeDiff = b.timestamp.getTime() - a.timestamp.getTime();
-    if (timeDiff !== 0) return timeDiff;
-    return b.createdAt.getTime() - a.createdAt.getTime();
-  });
-
-  return sorted[0]!.timestamp;
+  return sortStageEventsByRecency(events)[0]!.timestamp;
 }
 
 export { isTerminalStage };

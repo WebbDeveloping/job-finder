@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
@@ -34,9 +35,9 @@ import {
   renameResumeAction,
   setDefaultResumeAction,
 } from "@/app/(app)/resume/actions";
-import { ResumeDownloadButton } from "@/components/resume/ResumeDownloadButton";
 import { ResumePreviewDialog } from "@/components/resume/ResumePreviewDialog";
 import { formatDateTime } from "@/lib/datetime";
+import { downloadResumeFile } from "@/lib/resume-download";
 import type { ResumeLibraryItem } from "@/lib/resume-types";
 
 type ResumeLibraryProps = {
@@ -58,15 +59,11 @@ export function ResumeLibrary({ resumes, selectedId }: ResumeLibraryProps) {
   const [previewResume, setPreviewResume] = useState<ResumeLibraryItem | null>(
     null,
   );
+  const [downloading, setDownloading] = useState(false);
 
   const menuResume = resumes.find((r) => r.id === menuResumeId) ?? null;
   const renameResume = resumes.find((r) => r.id === renameResumeId) ?? null;
   const deleteResume = resumes.find((r) => r.id === deleteResumeId) ?? null;
-  const selected =
-    resumes.find((r) => r.id === selectedId) ??
-    resumes.find((r) => r.isDefault) ??
-    resumes[0] ??
-    null;
 
   function openPreview(resume: ResumeLibraryItem) {
     setPreviewResume(resume);
@@ -107,19 +104,9 @@ export function ResumeLibrary({ resumes, selectedId }: ResumeLibraryProps) {
 
   return (
     <Box sx={{ mb: 4 }}>
-      <Stack
-        direction={{ xs: "column", sm: "row" }}
-        spacing={2}
-        sx={{ mb: 2, justifyContent: "space-between", alignItems: { sm: "center" } }}
-      >
-        <Typography variant="h6" component="h2">
-          Your resumes
-        </Typography>
-        <ResumeDownloadButton
-          resumeId={selected?.id ?? null}
-          kind={selected?.kind ?? null}
-        />
-      </Stack>
+      <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
+        Your resumes
+      </Typography>
 
       {error ? (
         <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
@@ -206,6 +193,29 @@ export function ResumeLibrary({ resumes, selectedId }: ResumeLibraryProps) {
           >
             <EditOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
             Edit
+          </MenuItem>
+        ) : null}
+        {menuResume ? (
+          <MenuItem
+            disabled={downloading || isPending}
+            onClick={() => {
+              if (!menuResume) return;
+              closeMenu();
+              setError(null);
+              setDownloading(true);
+              void downloadResumeFile(menuResume.id, menuResume.kind).catch(
+                (err) => {
+                  setError(
+                    err instanceof Error ? err.message : "Download failed.",
+                  );
+                },
+              ).finally(() => {
+                setDownloading(false);
+              });
+            }}
+          >
+            <DownloadOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
+            {downloading ? "Downloading…" : "Download"}
           </MenuItem>
         ) : null}
         <MenuItem

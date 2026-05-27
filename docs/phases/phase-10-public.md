@@ -1,7 +1,7 @@
 # Phase 10 — Public surface and optional resume sharing
 
 **Status:** Pending  
-**Depends on:** Phase 9 (or Phase 8 if skipping polish temporarily — not recommended)  
+**Depends on:** Phase 9 (or Phase 8 if skipping polish temporarily — not recommended); **Phase 13** (`Resume` model — do not implement against `ResumeProfile`)  
 **Blocks:** Phase 11 (billing can parallelize after 9 if 10 skipped)
 
 ## Goal
@@ -25,14 +25,20 @@ Public marketing and legal pages are complete. Users may **opt in** to a public 
 
 ## Optional public resume
 
+Public sharing applies to **BUILT** resumes only (structured HTML view + optional PDF). **Uploaded** PDF files stay private unless product explicitly changes that later.
+
 ### Schema
 
+Add to `Resume` (from Phase 13):
+
 ```prisma
-model ResumeProfile {
-  // ...existing
-  isPublic    Boolean @default(false)
-  publicSlug  String? @unique  // e.g. cuid or slugified name + random suffix
+model Resume {
+  // ...existing Phase 13 fields
+  isPublic    Boolean   @default(false)
+  publicSlug  String?   @unique  // e.g. nanoid; unguessable
   publishedAt DateTime?
+  showEmailOnPublic Boolean @default(false)
+  showPhoneOnPublic Boolean @default(false)
 }
 ```
 

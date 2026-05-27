@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useState } from "react";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -10,7 +11,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import type { ResumeActionState } from "@/app/(app)/resume/actions";
-import { saveResumeProfile } from "@/app/(app)/resume/actions";
+import { saveBuiltResume } from "@/app/(app)/resume/actions";
 import {
   EMPTY_EDUCATION,
   EMPTY_EXPERIENCE,
@@ -21,6 +22,8 @@ import {
 
 type ResumeEditorFormProps = {
   defaultValues: ResumeProfileFormData;
+  resumeId?: string | null;
+  label?: string;
 };
 
 const initialState: ResumeActionState = {};
@@ -37,11 +40,22 @@ function ensureList<T>(items: T[], emptyFactory: () => T): T[] {
   return items.length > 0 ? items : [emptyFactory()];
 }
 
-export function ResumeEditorForm({ defaultValues }: ResumeEditorFormProps) {
+export function ResumeEditorForm({
+  defaultValues,
+  resumeId = null,
+  label = "",
+}: ResumeEditorFormProps) {
+  const router = useRouter();
   const [state, formAction, pending] = useActionState(
-    saveResumeProfile,
+    saveBuiltResume,
     initialState,
   );
+
+  useEffect(() => {
+    if (state.success && state.resumeId && !resumeId) {
+      router.replace(`/resume?id=${state.resumeId}`);
+    }
+  }, [state.success, state.resumeId, resumeId, router]);
 
   const [experience, setExperience] = useState(() =>
     ensureList(defaultValues.experience, newExperience),
@@ -107,6 +121,26 @@ export function ResumeEditorForm({ defaultValues }: ResumeEditorFormProps) {
         value={JSON.stringify(education)}
         readOnly
       />
+      {resumeId ? (
+        <input type="hidden" name="resumeId" value={resumeId} readOnly />
+      ) : null}
+
+      <Box>
+        <Typography variant="h6" gutterBottom>
+          Label
+        </Typography>
+        <TextField
+          id="label"
+          name="label"
+          label="Resume name"
+          fullWidth
+          defaultValue={label}
+          placeholder="e.g. Default, Staff engineer"
+          helperText="Shown in your resume library"
+        />
+      </Box>
+
+      <Divider />
 
       <Box>
         <Typography variant="h6" gutterBottom>

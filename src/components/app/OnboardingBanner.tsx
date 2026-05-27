@@ -28,10 +28,10 @@ export function OnboardingBanner({
         </>
       ) : !hasResume ? (
         <>
-          Your pipeline is underway. Next, set up your resume profile so you can
-          export a PDF.{" "}
+          Your pipeline is underway. Next, add a resume to your library so you can
+          download PDFs when you need them.{" "}
           <NextLinkButton href="/resume" size="small" variant="outlined" sx={{ ml: 1 }}>
-            Build resume
+            Resume library
           </NextLinkButton>
         </>
       ) : null}

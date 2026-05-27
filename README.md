@@ -62,7 +62,7 @@ Open [http://localhost:3000](http://localhost:3000). Health: `GET /api/health`.
 - `/dashboard` — signed-in home overview
 - `/pipeline` — job application pipeline
 - `/pipeline/analytics` — Sankey flow
-- `/resume` — resume builder + PDF
+- `/resume` — resume library (built resumes + PDF uploads)
 - `/settings` — profile and account
 
 Full route map: [docs/PLAN.md](docs/PLAN.md).
@@ -80,6 +80,16 @@ Protect `/api/auth/*` on Vercel with **Firewall** rules or an edge rate limiter 
 5. Redeploy and check `GET /api/health`.
 
 `prisma generate` runs via `postinstall`.
+
+## Resume uploads (Vercel Blob)
+
+Uploaded PDFs use [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) with a private store.
+
+1. In the Vercel project, open **Storage** → create or connect a **Blob** store.
+2. Copy the `BLOB_READ_WRITE_TOKEN` into Vercel env vars and local `.env`.
+3. Restart `npm run dev` after setting the token.
+
+Without the token, built resumes still work; PDF upload fails with a clear error.
 
 ## Tech
 

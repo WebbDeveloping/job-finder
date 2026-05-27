@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { requireUserId } from "@/lib/auth";
+import { deleteAllUserResumeFiles } from "@/lib/resume-storage";
 
 export type SettingsActionState = {
   error?: string;
@@ -30,6 +31,12 @@ export async function updateProfile(
 
 export async function deleteAccount(): Promise<void> {
   const userId = await requireUserId();
+
+  try {
+    await deleteAllUserResumeFiles(userId);
+  } catch {
+    // Continue account deletion even if blob cleanup fails.
+  }
 
   await prisma.user.delete({
     where: { id: userId },

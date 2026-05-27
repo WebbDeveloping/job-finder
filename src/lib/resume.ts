@@ -1,5 +1,6 @@
-import type { ResumeProfile } from "@/generated/prisma/client";
+import type { Resume, ResumeKind } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { deleteResumeFile } from "@/lib/resume-storage";
 import type {
   ResumeEducationEntry,
   ResumeExperienceEntry,
@@ -179,65 +180,208 @@ export function validateResumeFormData(
   return null;
 }
 
-export function toResumeFormData(profile: ResumeProfile): ResumeProfileFormData {
-  const experience = parseExperienceJson(profile.experience);
-  const education = parseEducationJson(profile.education);
+export function toResumeFormData(resume: Resume): ResumeProfileFormData {
+  const experience = parseExperienceJson(resume.experience ?? []);
+  const education = parseEducationJson(resume.education ?? []);
 
   return {
-    fullName: profile.fullName,
-    email: profile.email,
-    phone: profile.phone,
-    location: profile.location,
-    website: profile.website,
-    linkedIn: profile.linkedIn,
-    github: profile.github,
-    summary: profile.summary,
-    skills: profile.skills,
+    fullName: resume.fullName ?? "",
+    email: resume.email ?? "",
+    phone: resume.phone,
+    location: resume.location,
+    website: resume.website,
+    linkedIn: resume.linkedIn,
+    github: resume.github,
+    summary: resume.summary ?? "",
+    skills: resume.skills ?? "",
     experience: "error" in experience ? [] : experience,
     education: "error" in education ? [] : education,
   };
 }
 
-export async function getResumeProfile(
-  userId: string,
-): Promise<ResumeProfile | null> {
-  return prisma.resumeProfile.findUnique({
+function builtFieldData(data: ResumeProfileFormData) {
+  return {
+    fullName: data.fullName.trim(),
+    email: data.email.trim(),
+    phone: data.phone,
+    location: data.location,
+    website: data.website,
+    linkedIn: data.linkedIn,
+    github: data.github,
+    summary: data.summary.trim(),
+    skills: data.skills.trim(),
+    experience: data.experience,
+    education: data.education,
+  };
+}
+
+export async function listResumes(userId: string): Promise<Resume[]> {
+  return prisma.resume.findMany({
     where: { userId },
+    orderBy: [{ isDefault: "desc" }, { updatedAt: "desc" }],
   });
 }
 
-export async function upsertResumeProfile(
+export async function getResume(
+  userId: string,
+  resumeId: string,
+): Promise<Resume | null> {
+  return prisma.resume.findFirst({
+    where: { id: resumeId, userId },
+  });
+}
+
+export async function getDefaultResume(userId: string): Promise<Resume | null> {
+  return prisma.resume.findFirst({
+    where: { userId, isDefault: true },
+    orderBy: { updatedAt: "desc" },
+  });
+}
+
+export async function getDefaultBuiltResume(
+  userId: string,
+): Promise<Resume | null> {
+  return prisma.resume.findFirst({
+    where: { userId, kind: "BUILT", isDefault: true },
+    orderBy: { updatedAt: "desc" },
+  });
+}
+
+async function userHasDefault(userId: string): Promise<boolean> {
+  const existing = await prisma.resume.findFirst({
+    where: { userId, isDefault: true },
+    select: { id: true },
+  });
+  return existing !== null;
+}
+
+export async function setDefaultResume(
+  userId: string,
+  resumeId: string,
+): Promise<Resume> {
+  const resume = await getResume(userId, resumeId);
+  if (!resume) {
+    throw new Error("Resume not found.");
+  }
+
+  return prisma.$transaction(async (tx) => {
+    await tx.resume.updateMany({
+      where: { userId, isDefault: true },
+      data: { isDefault: false },
+    });
+    return tx.resume.update({
+      where: { id: resumeId },
+      data: { isDefault: true },
+    });
+  });
+}
+
+async function ensureDefaultIfNone(userId: string, resumeId: string) {
+  const hasDefault = await userHasDefault(userId);
+  if (!hasDefault) {
+    await setDefaultResume(userId, resumeId);
+  }
+}
+
+export async function createBuiltResume(
   userId: string,
   data: ResumeProfileFormData,
-): Promise<ResumeProfile> {
-  return prisma.resumeProfile.upsert({
-    where: { userId },
-    create: {
+  label?: string,
+): Promise<Resume> {
+  const resumeLabel =
+    label?.trim() ||
+    (data.fullName.trim() ? data.fullName.trim() : "Untitled resume");
+  const shouldDefault = !(await userHasDefault(userId));
+
+  return prisma.resume.create({
+    data: {
       userId,
-      fullName: data.fullName.trim(),
-      email: data.email.trim(),
-      phone: data.phone,
-      location: data.location,
-      website: data.website,
-      linkedIn: data.linkedIn,
-      github: data.github,
-      summary: data.summary.trim(),
-      skills: data.skills.trim(),
-      experience: data.experience,
-      education: data.education,
-    },
-    update: {
-      fullName: data.fullName.trim(),
-      email: data.email.trim(),
-      phone: data.phone,
-      location: data.location,
-      website: data.website,
-      linkedIn: data.linkedIn,
-      github: data.github,
-      summary: data.summary.trim(),
-      skills: data.skills.trim(),
-      experience: data.experience,
-      education: data.education,
+      kind: "BUILT",
+      label: resumeLabel,
+      isDefault: shouldDefault,
+      ...builtFieldData(data),
     },
   });
+}
+
+export async function updateBuiltResume(
+  userId: string,
+  resumeId: string,
+  data: ResumeProfileFormData,
+  label?: string,
+): Promise<Resume> {
+  const existing = await getResume(userId, resumeId);
+  if (!existing || existing.kind !== "BUILT") {
+    throw new Error("Built resume not found.");
+  }
+
+  const resume = await prisma.resume.update({
+    where: { id: resumeId },
+    data: {
+      ...(label?.trim() ? { label: label.trim() } : {}),
+      ...builtFieldData(data),
+    },
+  });
+
+  await ensureDefaultIfNone(userId, resume.id);
+  return resume;
+}
+
+export async function renameResume(
+  userId: string,
+  resumeId: string,
+  label: string,
+): Promise<Resume> {
+  const trimmed = label.trim();
+  if (trimmed === "") {
+    throw new Error("Label is required.");
+  }
+
+  const existing = await getResume(userId, resumeId);
+  if (!existing) {
+    throw new Error("Resume not found.");
+  }
+
+  return prisma.resume.update({
+    where: { id: resumeId },
+    data: { label: trimmed },
+  });
+}
+
+export async function deleteResume(
+  userId: string,
+  resumeId: string,
+): Promise<void> {
+  const resume = await getResume(userId, resumeId);
+  if (!resume) {
+    throw new Error("Resume not found.");
+  }
+
+  if (resume.kind === "UPLOADED" && resume.storageKey) {
+    try {
+      await deleteResumeFile(resume.storageKey);
+    } catch {
+      // Blob may already be gone; continue with DB delete.
+    }
+  }
+
+  await prisma.resume.delete({ where: { id: resumeId } });
+
+  if (resume.isDefault) {
+    const next = await prisma.resume.findFirst({
+      where: { userId },
+      orderBy: { updatedAt: "desc" },
+    });
+    if (next) {
+      await setDefaultResume(userId, next.id);
+    }
+  }
+}
+
+export function isBuiltResume(resume: Resume): boolean {
+  return resume.kind === ("BUILT" satisfies ResumeKind);
+}
+
+export function isUploadedResume(resume: Resume): boolean {
+  return resume.kind === ("UPLOADED" satisfies ResumeKind);
 }

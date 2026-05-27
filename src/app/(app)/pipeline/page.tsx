@@ -19,23 +19,24 @@ import {
   listApplications,
 } from "@/lib/application";
 import { requireUserId } from "@/lib/auth";
-import { getResumeProfile } from "@/lib/resume";
+import { listResumes } from "@/lib/resume";
 import { formatDateTime } from "@/lib/datetime";
 
 export const dynamic = "force-dynamic";
 
 export default async function PipelinePage() {
   const userId = await requireUserId();
-  const [applications, resume] = await Promise.all([
+  const [applications, resumes] = await Promise.all([
     listApplications(userId),
-    getResumeProfile(userId),
+    listResumes(userId),
   ]);
+  const hasResume = resumes.length > 0;
 
   return (
     <Box>
       <OnboardingBanner
         hasApplications={applications.length > 0}
-        hasResume={resume !== null}
+        hasResume={hasResume}
       />
       <Stack
         direction={{ xs: "column", sm: "row" }}

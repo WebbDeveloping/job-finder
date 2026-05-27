@@ -7,21 +7,34 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 type ResumeDownloadButtonProps = {
-  hasSavedProfile: boolean;
+  resumeId: string | null;
+  kind: "BUILT" | "UPLOADED" | null;
+  disabled?: boolean;
 };
 
 export function ResumeDownloadButton({
-  hasSavedProfile,
+  resumeId,
+  kind,
+  disabled = false,
 }: ResumeDownloadButtonProps) {
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const canDownload = resumeId !== null && kind !== null && !disabled;
+
   async function handleDownload() {
+    if (!resumeId || !kind) return;
+
     setError(null);
     setDownloading(true);
 
     try {
-      const response = await fetch("/api/resume/pdf");
+      const url =
+        kind === "BUILT"
+          ? `/api/resume/pdf?resumeId=${encodeURIComponent(resumeId)}`
+          : `/api/resume/file/${encodeURIComponent(resumeId)}`;
+
+      const response = await fetch(url);
       if (!response.ok) {
         const body = (await response.json().catch(() => null)) as {
           error?: string;
@@ -32,14 +45,14 @@ export function ResumeDownloadButton({
       const blob = await response.blob();
       const disposition = response.headers.get("Content-Disposition");
       const filenameMatch = disposition?.match(/filename="([^"]+)"/);
-      const filename = filenameMatch?.[1] ?? "Resume.pdf";
+      const filename = filenameMatch?.[1] ?? "resume.pdf";
 
-      const url = URL.createObjectURL(blob);
+      const objectUrl = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
-      anchor.href = url;
+      anchor.href = objectUrl;
       anchor.download = filename;
       anchor.click();
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(objectUrl);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Download failed.");
     } finally {
@@ -54,18 +67,18 @@ export function ResumeDownloadButton({
     >
       <Button
         variant="outlined"
-        disabled={!hasSavedProfile || downloading}
+        disabled={!canDownload || downloading}
         onClick={handleDownload}
       >
-        {downloading ? "Generating…" : "Download PDF"}
+        {downloading ? "Downloading…" : "Download"}
       </Button>
-      {!hasSavedProfile && (
+      {!canDownload && (
         <Typography
           variant="caption"
           color="text.secondary"
           sx={{ textAlign: { xs: "left", sm: "right" } }}
         >
-          Save your resume to enable download.
+          Select a resume to download.
         </Typography>
       )}
       {error && (

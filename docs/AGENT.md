@@ -38,9 +38,11 @@ Do NOT: {phase-specific exclusions from phase doc}
 | 7 | Add Stripe, landing page, public resume, or hard usage limits |
 | 8 | Add Stripe Checkout; optional soft `plan` field only |
 | 9 | Add billing or new features |
-| 10 | Make pipeline or Sankey public |
+| 10 | Make pipeline or Sankey public; implement before Phase 13 if `Resume` model is not ready |
 | 11 | Add teams/workspaces or enterprise SSO |
 | 12 | Large feature work — ops and compliance only |
+| 13 | Link resumes to applications (Phase 14); public `/r/[slug]`; DOCX upload; PDF parsing |
+| 14 | New resume types, upload storage, or resume library UI (Phase 13) |
 
 ## Definition of done (every phase)
 

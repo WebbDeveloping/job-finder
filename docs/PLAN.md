@@ -33,6 +33,10 @@ Track job applications (Sankey pipeline) and build a resume with PDF download. E
 | **10** | Pending | [phase-10-public](./phases/phase-10-public.md) | Privacy/terms, opt-in public resume `/r/[slug]` |
 | **11** | Pending | [phase-11-billing](./phases/phase-11-billing.md) | Stripe Free / Pro |
 | **12** | Pending | [phase-12-hardening](./phases/phase-12-hardening.md) | Sentry, email, backups, admin, export |
+| **13** | Done | [phase-13-resume-library](./phases/phase-13-resume-library.md) | Resume library: built + PDF upload, default resume |
+| **14** | Pending | [phase-14-application-resume](./phases/phase-14-application-resume.md) | Select resume per job application |
+
+**Recommended order:** Complete **Phase 13** (and **14** if tracking per job) **before Phase 10** so public sharing uses the `Resume` model instead of legacy `ResumeProfile`.
 
 **Database target:** PostgreSQL only after Phase 6. See [DATABASE.md](./DATABASE.md).
 
@@ -61,18 +65,20 @@ Terminals: `Rejected`, `Withdrawn`, `Accepted`
 | `/pipeline/analytics` | Authenticated | Sankey |
 | `/pipeline/new` | Authenticated | Create application |
 | `/pipeline/[id]` | Authenticated | Detail + stage history (owner only) |
-| `/resume` | Authenticated | Resume builder |
+| `/resume` | Authenticated | Resume library (built + uploads); `?id=` / `?new=built` for editor |
 | `/settings` | Authenticated | Profile, delete account |
 | `/api/health` | Public | DB check |
 | `/api/auth/*` | Public | Auth.js handlers |
-| `/api/resume/pdf` | Authenticated | Resume PDF download |
+| `/api/resume/pdf` | Authenticated | Resume PDF download (BUILT; Phase 13 adds `?resumeId=`) |
 
 ### Routes (future SaaS phases)
 
 | Route | Access |
 |-------|--------|
+| `/resume/[id]` or `/resume?id=` | Authenticated (Phase 13) — edit a specific built resume |
+| `/api/resume/file/[id]` | Authenticated (Phase 13) — download uploaded PDF |
 | `/settings/billing` | Authenticated (Phase 11) |
-| `/r/[slug]` | Public if resume published (Phase 10) |
+| `/r/[slug]` | Public if resume published (Phase 10; targets `Resume`) |
 
 ## Agent chat guidance
 
@@ -81,10 +87,18 @@ Terminals: `Rejected`, `Withdrawn`, `Accepted`
 3. Do not implement features from future phases.
 4. Mark phase **Done** in this table when complete.
 
-### Suggested next chat prompt (Phase 7)
+### Suggested next chat prompt (Phase 9)
 
 ```
-Implement Phase 7 per docs/phases/phase-07-auth-tenancy.md.
-PostgreSQL is live (Phase 6 done). No Stripe.
-Update docs/PLAN.md Phase 7 status when done.
+Implement Phase 9 per docs/phases/phase-09-polish.md.
+Phases 0–8 are done. No new data models or Stripe.
+Update docs/PLAN.md Phase 9 status when done.
+```
+
+### Suggested chat prompt (Phase 13 — resume library)
+
+```
+Implement Phase 13 per docs/phases/phase-13-resume-library.md.
+Phases 0–9 done (or note if 9 skipped). No application resume linking (Phase 14).
+Update docs/PLAN.md Phase 13 status when done.
 ```

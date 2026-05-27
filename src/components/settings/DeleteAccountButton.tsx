@@ -51,7 +51,8 @@ export function DeleteAccountButton() {
           <Stack spacing={2}>
             <DialogContentText>
               This permanently deletes your account, all job applications, stage
-              history, and resume data. This cannot be undone.
+              history, resume library entries, and uploaded files. This cannot be
+              undone.
             </DialogContentText>
             <TextField
               label={`Type ${CONFIRM_TEXT} to confirm`}

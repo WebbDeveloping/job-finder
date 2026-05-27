@@ -12,5 +12,5 @@ globs:
 - **Database:** PostgreSQL ([docs/DATABASE.md](../../docs/DATABASE.md)); `PrismaClient` + `@prisma/adapter-pg` in `src/lib/prisma.ts` (no SQLite).
 - Import `PrismaClient` from `@/generated/prisma/client` (generated output, not `@prisma/client`)
 - **SaaS:** One build phase per task — check [docs/PLAN.md](../../docs/PLAN.md) and the matching [docs/phases/](../../docs/phases/) doc. Do not implement future phases.
-- **Multi-tenant (Phase 7+):** Every query/mutation on `Application`, `StageEvent`, `ResumeProfile` must filter by `userId`. See [docs/SAAS.md](../../docs/SAAS.md).
+- **Multi-tenant (Phase 7+):** Every query/mutation on `Application`, `StageEvent`, `Resume` must filter by `userId`. See [docs/SAAS.md](../../docs/SAAS.md).
 - Keep changes minimal and focused

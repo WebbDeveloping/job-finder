@@ -37,8 +37,8 @@ model User {
 
   accounts      Account[]
   sessions      Session[]
-  applications  Application[]
-  resumeProfile ResumeProfile?
+  applications Application[]
+  resumes      Resume[]
 }
 
 model Account {
@@ -102,21 +102,39 @@ model StageEvent {
   @@index([timestamp])
 }
 
-model ResumeProfile {
-  id         String   @id @default(cuid())
-  userId     String   @unique
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  fullName   String   @default("")
-  email      String   @default("")
+enum ResumeKind {
+  BUILT
+  UPLOADED
+}
+
+model Resume {
+  id        String     @id @default(cuid())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      ResumeKind
+  label     String
+  isDefault Boolean    @default(false)
+
+  fullName   String?
+  email      String?
   phone      String?
   location   String?
   website    String?
   linkedIn   String?
   github     String?
-  summary    String   @default("")
-  skills     String   @default("")
-  experience Json     @default("[]")
-  education  Json     @default("[]")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  summary    String?
+  skills     String?
+  experience Json?
+  education  Json?
+
+  fileName   String?
+  mimeType   String?
+  fileSize   Int?
+  storageKey String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userId, isDefault])
 }

@@ -75,12 +75,12 @@ flowchart TB
     User
     Application
     StageEvent
-    ResumeProfile
+    Resume
   end
 
   AuthPages --> User
   app --> data
-  PublicResume --> ResumeProfile
+  PublicResume --> Resume
 ```
 
 ## Authorization rule (all phases after 7)
@@ -103,9 +103,13 @@ Never trust route params (`/pipeline/[id]`) without an ownership check.
 | **7** | [phases/phase-07-auth-tenancy.md](./phases/phase-07-auth-tenancy.md) | 6 |
 | **8** | [phases/phase-08-saas-shell.md](./phases/phase-08-saas-shell.md) | 7 |
 | **9** | [phases/phase-09-polish.md](./phases/phase-09-polish.md) | 8 |
-| **10** | [phases/phase-10-public.md](./phases/phase-10-public.md) | 9 |
+| **10** | [phases/phase-10-public.md](./phases/phase-10-public.md) | 9, **13** (public share on `Resume`) |
 | **11** | [phases/phase-11-billing.md](./phases/phase-11-billing.md) | 10 (or 9 if skipping public share) |
 | **12** | [phases/phase-12-hardening.md](./phases/phase-12-hardening.md) | 11 |
+| **13** | [phases/phase-13-resume-library.md](./phases/phase-13-resume-library.md) | 9 |
+| **14** | [phases/phase-14-application-resume.md](./phases/phase-14-application-resume.md) | 13 |
+
+**Resume library:** Prefer **13 → 14** before **10** so public routes target `Resume`, not `ResumeProfile`.
 
 ## Files that touch tenant data today
 

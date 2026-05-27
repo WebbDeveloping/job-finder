@@ -3,16 +3,30 @@
 import { revalidatePath } from "next/cache";
 import { requireUserId } from "@/lib/auth";
 import {
+  createBuiltResume,
+  deleteResume,
   parseEducationJson,
   parseExperienceJson,
-  upsertResumeProfile,
+  renameResume,
+  setDefaultResume,
+  updateBuiltResume,
   validateResumeFormData,
 } from "@/lib/resume";
+import {
+  buildResumeStorageKey,
+  uploadResumeFile,
+} from "@/lib/resume-storage";
+import {
+  RESUME_UPLOAD_MAX_BYTES,
+  RESUME_UPLOAD_MIME,
+} from "@/lib/resume-constants";
 import type { ResumeProfileFormData } from "@/lib/resume-types";
+import { prisma } from "@/lib/prisma";
 
 export type ResumeActionState = {
   error?: string;
   success?: boolean;
+  resumeId?: string;
 };
 
 function trimOptional(value: FormDataEntryValue | null): string | null {
@@ -49,12 +63,9 @@ function parseJsonField(
   }
 }
 
-export async function saveResumeProfile(
-  _prevState: ResumeActionState,
+async function parseBuiltFormData(
   formData: FormData,
-): Promise<ResumeActionState> {
-  const userId = await requireUserId();
-
+): Promise<ResumeProfileFormData | ResumeActionState> {
   const fullName = requireField(formData.get("fullName"), "Full name");
   if (typeof fullName !== "string") return fullName;
 
@@ -106,9 +117,173 @@ export async function saveResumeProfile(
   const validationError = validateResumeFormData(data);
   if (validationError) return validationError;
 
-  await upsertResumeProfile(userId, data);
+  return data;
+}
+
+export async function saveBuiltResume(
+  _prevState: ResumeActionState,
+  formData: FormData,
+): Promise<ResumeActionState> {
+  const userId = await requireUserId();
+  const parsed = await parseBuiltFormData(formData);
+  if ("error" in parsed && parsed.error !== undefined) return parsed;
+  if (!("fullName" in parsed)) return { error: "Invalid form data." };
+
+  const resumeIdRaw = formData.get("resumeId");
+  const resumeId =
+    typeof resumeIdRaw === "string" && resumeIdRaw.trim() !== ""
+      ? resumeIdRaw.trim()
+      : null;
+
+  const labelRaw = formData.get("label");
+  const label =
+    typeof labelRaw === "string" && labelRaw.trim() !== ""
+      ? labelRaw.trim()
+      : undefined;
+
+  let savedId: string;
+  if (resumeId) {
+    const updated = await updateBuiltResume(userId, resumeId, parsed, label);
+    savedId = updated.id;
+  } else {
+    const created = await createBuiltResume(userId, parsed, label);
+    savedId = created.id;
+  }
 
   revalidatePath("/resume");
   revalidatePath("/dashboard");
+  return { success: true, resumeId: savedId };
+}
+
+/** @deprecated Use saveBuiltResume */
+export const saveResumeProfile = saveBuiltResume;
+
+export async function uploadResume(
+  _prevState: ResumeActionState,
+  formData: FormData,
+): Promise<ResumeActionState> {
+  const userId = await requireUserId();
+
+  const file = formData.get("file");
+  if (!(file instanceof File)) {
+    return { error: "PDF file is required." };
+  }
+
+  if (file.type !== RESUME_UPLOAD_MIME) {
+    return { error: "Only PDF files are supported." };
+  }
+
+  if (file.size > RESUME_UPLOAD_MAX_BYTES) {
+    return { error: "File must be 5 MB or smaller." };
+  }
+
+  const labelField = formData.get("label");
+  const label =
+    typeof labelField === "string" && labelField.trim() !== ""
+      ? labelField.trim()
+      : file.name;
+
+  const resume = await prisma.resume.create({
+    data: {
+      userId,
+      kind: "UPLOADED",
+      label,
+      fileName: file.name,
+      mimeType: RESUME_UPLOAD_MIME,
+      fileSize: file.size,
+      isDefault: false,
+    },
+  });
+
+  const storageKey = buildResumeStorageKey(userId, resume.id, file.name);
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  try {
+    await uploadResumeFile(storageKey, buffer, RESUME_UPLOAD_MIME);
+  } catch (error) {
+    await prisma.resume.delete({ where: { id: resume.id } });
+    const message =
+      error instanceof Error ? error.message : "Upload failed.";
+    return { error: message };
+  }
+
+  await prisma.resume.update({
+    where: { id: resume.id },
+    data: { storageKey },
+  });
+
+  const hasDefault = await prisma.resume.findFirst({
+    where: { userId, isDefault: true },
+    select: { id: true },
+  });
+  if (!hasDefault) {
+    await setDefaultResume(userId, resume.id);
+  }
+
+  revalidatePath("/resume");
+  revalidatePath("/dashboard");
+  return { success: true, resumeId: resume.id };
+}
+
+export async function deleteResumeAction(
+  resumeId: string,
+): Promise<ResumeActionState> {
+  const userId = await requireUserId();
+  if (!resumeId.trim()) {
+    return { error: "Resume id is required." };
+  }
+
+  try {
+    await deleteResume(userId, resumeId.trim());
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : "Delete failed.",
+    };
+  }
+
+  revalidatePath("/resume");
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
+export async function setDefaultResumeAction(
+  resumeId: string,
+): Promise<ResumeActionState> {
+  const userId = await requireUserId();
+  if (!resumeId.trim()) {
+    return { error: "Resume id is required." };
+  }
+
+  try {
+    await setDefaultResume(userId, resumeId.trim());
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : "Could not set default.",
+    };
+  }
+
+  revalidatePath("/resume");
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
+export async function renameResumeAction(
+  resumeId: string,
+  label: string,
+): Promise<ResumeActionState> {
+  const userId = await requireUserId();
+  if (!resumeId.trim()) {
+    return { error: "Resume id is required." };
+  }
+
+  try {
+    await renameResume(userId, resumeId.trim(), label);
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : "Rename failed.",
+    };
+  }
+
+  revalidatePath("/resume");
   return { success: true };
 }

@@ -4,10 +4,12 @@ import Grid from "@mui/material/Grid";
 import { NextMuiLink } from "@/components/NextMuiLink";
 import Typography from "@mui/material/Typography";
 import { ApplicationForm } from "@/components/pipeline/ApplicationForm";
+import { ApplicationResumeSection } from "@/components/pipeline/ApplicationResumeSection";
 import { StageChangeForm } from "@/components/pipeline/StageChangeForm";
 import { StageHistory } from "@/components/pipeline/StageHistory";
 import { getApplication, getCurrentStage } from "@/lib/application";
 import { requireUserId } from "@/lib/auth";
+import { listResumes } from "@/lib/resume";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -18,13 +20,21 @@ export const dynamic = "force-dynamic";
 export default async function ApplicationDetailPage({ params }: PageProps) {
   const userId = await requireUserId();
   const { id } = await params;
-  const application = await getApplication(id, userId);
+  const [application, resumes] = await Promise.all([
+    getApplication(id, userId),
+    listResumes(userId),
+  ]);
 
   if (!application) {
     notFound();
   }
 
   const currentStage = getCurrentStage(application.stageEvents);
+  const resumeOptions = resumes.map((resume) => ({
+    id: resume.id,
+    label: resume.label,
+    kind: resume.kind,
+  }));
 
   return (
     <Box>
@@ -43,6 +53,23 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
         {application.role}
       </Typography>
 
+      <Box sx={{ mt: 4, maxWidth: 480 }}>
+        <Typography variant="h6" gutterBottom>
+          Resume used
+        </Typography>
+        <ApplicationResumeSection
+          resume={
+            application.resume
+              ? {
+                  id: application.resume.id,
+                  label: application.resume.label,
+                  kind: application.resume.kind,
+                }
+              : null
+          }
+        />
+      </Box>
+
       <Grid container spacing={4} sx={{ mt: 4 }}>
         <Grid size={{ xs: 12, lg: 6 }}>
           <Typography variant="h6" gutterBottom>
@@ -52,11 +79,13 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
             <ApplicationForm
               mode="edit"
               applicationId={application.id}
+              resumes={resumeOptions}
               defaultValues={{
                 company: application.company,
                 role: application.role,
                 source: application.source ?? "",
                 notes: application.notes ?? "",
+                resumeId: application.resumeId,
               }}
             />
           </Box>

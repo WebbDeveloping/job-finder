@@ -8,7 +8,6 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ResumeEditorForm } from "@/components/resume/ResumeEditorForm";
 import {
   ResumeLibrary,
-  type ResumeLibraryItem,
 } from "@/components/resume/ResumeLibrary";
 import { ResumePageActions } from "@/components/resume/ResumePageActions";
 import { requireUserId } from "@/lib/auth";
@@ -18,7 +17,7 @@ import {
   listResumes,
   toResumeFormData,
 } from "@/lib/resume";
-import type { ResumeProfileFormData } from "@/lib/resume-types";
+import type { ResumeLibraryItem, ResumeProfileFormData } from "@/lib/resume-types";
 
 const emptyDefaults: ResumeProfileFormData = {
   fullName: "",

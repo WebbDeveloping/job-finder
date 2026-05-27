@@ -112,6 +112,16 @@ export default async function PipelinePage() {
                       >
                         {app.company}
                       </NextMuiLink>
+                      {app.resume && (
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          component="div"
+                          sx={{ mt: 0.25 }}
+                        >
+                          {app.resume.label}
+                        </Typography>
+                      )}
                     </TableCell>
                     <TableCell>{app.role}</TableCell>
                     <TableCell>{app.source ?? "—"}</TableCell>

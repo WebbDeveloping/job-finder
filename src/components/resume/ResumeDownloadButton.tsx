@@ -5,6 +5,7 @@ import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { downloadResumeFile } from "@/lib/resume-download";
 
 type ResumeDownloadButtonProps = {
   resumeId: string | null;
@@ -29,30 +30,7 @@ export function ResumeDownloadButton({
     setDownloading(true);
 
     try {
-      const url =
-        kind === "BUILT"
-          ? `/api/resume/pdf?resumeId=${encodeURIComponent(resumeId)}`
-          : `/api/resume/file/${encodeURIComponent(resumeId)}`;
-
-      const response = await fetch(url);
-      if (!response.ok) {
-        const body = (await response.json().catch(() => null)) as {
-          error?: string;
-        } | null;
-        throw new Error(body?.error ?? "Download failed.");
-      }
-
-      const blob = await response.blob();
-      const disposition = response.headers.get("Content-Disposition");
-      const filenameMatch = disposition?.match(/filename="([^"]+)"/);
-      const filename = filenameMatch?.[1] ?? "resume.pdf";
-
-      const objectUrl = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = objectUrl;
-      anchor.download = filename;
-      anchor.click();
-      URL.revokeObjectURL(objectUrl);
+      await downloadResumeFile(resumeId, kind);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Download failed.");
     } finally {

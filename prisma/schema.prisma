@@ -82,11 +82,14 @@ model Application {
   role        String
   source      String?
   notes       String?
+  resumeId    String?
+  resume      Resume?      @relation(fields: [resumeId], references: [id], onDelete: SetNull)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   stageEvents StageEvent[]
 
   @@index([userId])
+  @@index([resumeId])
 }
 
 model StageEvent {
@@ -134,6 +137,8 @@ model Resume {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  applications Application[]
 
   @@index([userId])
   @@index([userId, isDefault])

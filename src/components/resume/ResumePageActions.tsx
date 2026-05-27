@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import Button from "@mui/material/Button";
@@ -10,6 +10,7 @@ import { ResumeUploadDialog } from "@/components/resume/ResumeUploadDialog";
 
 export function ResumePageActions() {
   const [uploadOpen, setUploadOpen] = useState(false);
+  const closeUpload = useCallback(() => setUploadOpen(false), []);
 
   return (
     <>
@@ -25,7 +26,11 @@ export function ResumePageActions() {
           Upload PDF
         </Button>
       </Stack>
-      <ResumeUploadDialog open={uploadOpen} onClose={() => setUploadOpen(false)} />
+      <ResumeUploadDialog
+        key={uploadOpen ? "upload-open" : "upload-closed"}
+        open={uploadOpen}
+        onClose={closeUpload}
+      />
     </>
   );
 }

@@ -1,26 +1,46 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { NextMuiLink } from "@/components/NextMuiLink";
 import type { Stage } from "@/generated/prisma/client";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import {
-  SankeyChart,
-  type SankeyLinkSelection,
-} from "@/components/pipeline/SankeyChart";
+import type { SankeyLinkSelection } from "@/components/pipeline/SankeyChart";
+
+const SankeyChart = dynamic(
+  () =>
+    import("@/components/pipeline/SankeyChart").then((mod) => mod.SankeyChart),
+  {
+    ssr: false,
+    loading: () => (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: 280,
+        }}
+      >
+        <CircularProgress size={32} aria-label="Loading chart" />
+      </Box>
+    ),
+  },
+);
 import { StageBadge } from "@/components/pipeline/StageBadge";
 import {
   SANKEY_ENTRY_NODE,
   type SankeyGraph,
   type SankeyNodeId,
 } from "@/lib/sankey/types";
+import { formatStage } from "@/lib/stages";
 
 type ApplicationSummary = {
   id: string;
@@ -35,8 +55,9 @@ type SankeyPanelProps = {
 };
 
 function formatTransition(from: SankeyNodeId, to: Stage): string {
-  const fromLabel = from === SANKEY_ENTRY_NODE ? "New application" : from;
-  return `${fromLabel} → ${to}`;
+  const fromLabel =
+    from === SANKEY_ENTRY_NODE ? formatStage(null) : formatStage(from);
+  return `${fromLabel} → ${formatStage(to)}`;
 }
 
 export function SankeyPanel({ graph, applicationsById }: SankeyPanelProps) {

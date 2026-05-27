@@ -13,7 +13,7 @@ const features = [
   {
     title: "Application pipeline",
     description:
-      "Track every role from saved to offer. Log stage changes and see where each application stands.",
+      "Track every role from wishlist to offer. Log stage changes and see where each application stands.",
     icon: <TimelineOutlinedIcon />,
   },
   {

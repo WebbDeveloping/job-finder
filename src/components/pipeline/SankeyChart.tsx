@@ -14,6 +14,7 @@ import { useTheme } from "@mui/material/styles";
 import type { Stage } from "@/generated/prisma/client";
 import type { SankeyGraph, SankeyNodeId } from "@/lib/sankey/types";
 import { SANKEY_ENTRY_NODE } from "@/lib/sankey/types";
+import { formatStage } from "@/lib/stages";
 
 type SankeyNodeDatum = {
   id: SankeyNodeId;
@@ -48,9 +49,10 @@ const MARGIN = { top: 16, right: 120, bottom: 16, left: 8 };
 
 const NODE_COLORS: Record<string, string> = {
   Entry: "#71717a",
-  Saved: "#a1a1aa",
+  Wishlist: "#a1a1aa",
   Applied: "#3b82f6",
   Recruiter: "#6366f1",
+  TakeHome: "#0ea5e9",
   Technical: "#8b5cf6",
   Onsite: "#a855f7",
   Offer: "#22c55e",
@@ -61,6 +63,35 @@ const NODE_COLORS: Record<string, string> = {
 
 function nodeColor(id: SankeyNodeId): string {
   return NODE_COLORS[id] ?? "#71717a";
+}
+
+function nodeIdFromEndpoint(
+  endpoint: LayoutLink["source"],
+  fallback: SankeyNodeId,
+): SankeyNodeId {
+  if (typeof endpoint === "string") return endpoint as SankeyNodeId;
+  const node = endpoint as SankeyNodeDatum;
+  return node.id ?? fallback;
+}
+
+function getLinkEndpoints(link: LayoutLink): {
+  from: SankeyNodeId;
+  to: Stage;
+  applicationIds: string[];
+} {
+  const extras = link as LayoutLink & SankeyLinkDatum;
+
+  return {
+    from: nodeIdFromEndpoint(link.source, extras.from),
+    to: nodeIdFromEndpoint(link.target, extras.to) as Stage,
+    applicationIds: extras.applicationIds,
+  };
+}
+
+function formatLinkTitle(from: SankeyNodeId, to: Stage, value: number): string {
+  const fromLabel =
+    from === SANKEY_ENTRY_NODE ? formatStage(null) : formatStage(from);
+  return `${fromLabel} → ${formatStage(to)}: ${value} application${value === 1 ? "" : "s"}`;
 }
 
 export function SankeyChart({
@@ -163,8 +194,9 @@ export function SankeyChart({
               const path = sankeyLinkHorizontal()(datum);
               if (!path) return null;
 
-              const meta = datum as LayoutLink & SankeyLinkDatum;
-              const selected = isSelected(meta.from, meta.to);
+              const { from, to, applicationIds } = getLinkEndpoints(datum);
+              const selected = isSelected(from, to);
+              const value = datum.value ?? 0;
 
               return (
                 <path
@@ -180,20 +212,14 @@ export function SankeyChart({
                       selected
                         ? null
                         : {
-                            from: meta.from,
-                            to: meta.to,
-                            applicationIds: meta.applicationIds,
+                            from,
+                            to,
+                            applicationIds,
                           },
                     )
                   }
                 >
-                  <title>
-                    {meta.from === SANKEY_ENTRY_NODE
-                      ? "New application"
-                      : meta.from}{" "}
-                    → {meta.to}: {datum.value} application
-                    {datum.value === 1 ? "" : "s"}
-                  </title>
+                  <title>{formatLinkTitle(from, to, value)}</title>
                 </path>
               );
             })}

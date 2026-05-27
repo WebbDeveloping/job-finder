@@ -78,7 +78,7 @@ export async function createApplication(
       stageEvents: {
         create: {
           fromStage: null,
-          toStage: "Saved",
+          toStage: "Wishlist",
           timestamp: new Date(),
         },
       },

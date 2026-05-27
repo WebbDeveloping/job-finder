@@ -13,7 +13,7 @@ import type { ActionState } from "@/app/(app)/pipeline/actions";
 import { logStageChange } from "@/app/(app)/pipeline/actions";
 import { StageBadge } from "@/components/pipeline/StageBadge";
 import { toDatetimeLocalValue } from "@/lib/datetime";
-import { ALL_STAGES } from "@/lib/stages";
+import { ALL_STAGES, formatStage } from "@/lib/stages";
 
 type StageChangeFormProps = {
   applicationId: string;
@@ -56,7 +56,7 @@ export function StageChangeForm({
         </MenuItem>
         {ALL_STAGES.filter((s) => s !== currentStage).map((stage) => (
           <MenuItem key={stage} value={stage}>
-            {stage}
+            {formatStage(stage)}
           </MenuItem>
         ))}
       </TextField>

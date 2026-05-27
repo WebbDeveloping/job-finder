@@ -10,9 +10,10 @@ datasource db {
 }
 
 enum Stage {
-  Saved
+  Wishlist
   Applied
   Recruiter
+  TakeHome
   Technical
   Onsite
   Offer

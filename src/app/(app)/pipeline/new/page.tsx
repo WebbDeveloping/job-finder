@@ -18,7 +18,7 @@ export default function NewApplicationPage() {
         Add application
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-        New applications start at the Saved stage.
+        New applications start on your wishlist until you submit.
       </Typography>
       <Box sx={{ mt: 4, maxWidth: 480 }}>
         <ApplicationForm mode="create" />

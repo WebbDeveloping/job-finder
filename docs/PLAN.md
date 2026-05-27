@@ -38,7 +38,7 @@ Track job applications (Sankey pipeline) and build a resume with PDF download. E
 
 ## Default pipeline stages
 
-`Saved` → `Applied` → `Recruiter` → `Technical` → `Onsite` → `Offer`
+`Wishlist` → `Applied` → `Recruiter` → `TakeHome` → `Technical` → `Onsite` → `Offer`
 
 Terminals: `Rejected`, `Withdrawn`, `Accepted`
 

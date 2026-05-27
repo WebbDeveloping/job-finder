@@ -1,5 +1,5 @@
 import type { Stage, StageEvent } from "@/generated/prisma/client";
-import { ALL_STAGES } from "@/lib/stages";
+import { ALL_STAGES, formatStage } from "@/lib/stages";
 import {
   SANKEY_ENTRY_NODE,
   type SankeyFilters,
@@ -80,7 +80,7 @@ export function aggregateSankeyGraph(
     (a, b) => (nodeOrder.get(a) ?? 999) - (nodeOrder.get(b) ?? 999),
   ).map((id) => ({
     id,
-    label: id === SANKEY_ENTRY_NODE ? "New application" : id,
+    label: id === SANKEY_ENTRY_NODE ? formatStage(null) : formatStage(id),
   }));
 
   return { nodes, links };

@@ -7,7 +7,7 @@ export type ApplicationWithEvents = Application & {
 };
 
 export function getCurrentStage(events: StageEvent[]): Stage {
-  if (events.length === 0) return "Saved";
+  if (events.length === 0) return "Wishlist";
 
   const sorted = [...events].sort((a, b) => {
     const timeDiff = b.timestamp.getTime() - a.timestamp.getTime();

@@ -231,6 +231,17 @@ export async function getResume(
   });
 }
 
+export async function assertResumeOwnedByUser(
+  resumeId: string,
+  userId: string,
+): Promise<Resume | { error: string }> {
+  const resume = await getResume(userId, resumeId);
+  if (!resume) {
+    return { error: "Resume not found." };
+  }
+  return resume;
+}
+
 export async function getDefaultResume(userId: string): Promise<Resume | null> {
   return prisma.resume.findFirst({
     where: { userId, isDefault: true },

@@ -34,7 +34,7 @@ Track job applications (Sankey pipeline) and build a resume with PDF download. E
 | **11** | Pending | [phase-11-billing](./phases/phase-11-billing.md) | Stripe Free / Pro |
 | **12** | Pending | [phase-12-hardening](./phases/phase-12-hardening.md) | Sentry, email, backups, admin, export |
 | **13** | Done | [phase-13-resume-library](./phases/phase-13-resume-library.md) | Resume library: built + PDF upload, default resume |
-| **14** | Pending | [phase-14-application-resume](./phases/phase-14-application-resume.md) | Select resume per job application |
+| **14** | Done | [phase-14-application-resume](./phases/phase-14-application-resume.md) | Select resume per job application |
 
 **Recommended order:** Complete **Phase 13** (and **14** if tracking per job) **before Phase 10** so public sharing uses the `Resume` model instead of legacy `ResumeProfile`.
 

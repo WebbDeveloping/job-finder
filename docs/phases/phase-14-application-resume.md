@@ -1,6 +1,6 @@
 # Phase 14 — Resume per job application
 
-**Status:** Pending  
+**Status:** Done  
 **Depends on:** Phase 13 (`Resume` library)  
 **Blocks:** None (Phase 10 public resume does not require this, but complements the product)
 

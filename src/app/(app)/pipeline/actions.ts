@@ -6,6 +6,7 @@ import type { Stage } from "@/generated/prisma/client";
 import { getApplication, getCurrentStage } from "@/lib/application";
 import { requireUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { assertResumeOwnedByUser } from "@/lib/resume";
 import { ALL_STAGES } from "@/lib/stages";
 
 export type ActionState = {
@@ -16,6 +17,23 @@ function trimOptional(value: FormDataEntryValue | null): string | null {
   if (value === null || typeof value !== "string") return null;
   const trimmed = value.trim();
   return trimmed === "" ? null : trimmed;
+}
+
+function parseResumeId(value: FormDataEntryValue | null): string | null {
+  if (value === null || typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed === "" ? null : trimmed;
+}
+
+async function resolveResumeId(
+  formData: FormData,
+  userId: string,
+): Promise<string | null | ActionState> {
+  const resumeId = parseResumeId(formData.get("resumeId"));
+  if (resumeId === null) return null;
+  const owned = await assertResumeOwnedByUser(resumeId, userId);
+  if ("error" in owned) return owned;
+  return resumeId;
 }
 
 function requireField(
@@ -68,6 +86,9 @@ export async function createApplication(
   const source = trimOptional(formData.get("source"));
   const notes = trimOptional(formData.get("notes"));
 
+  const resumeId = await resolveResumeId(formData, userId);
+  if (typeof resumeId !== "string" && resumeId !== null) return resumeId;
+
   const application = await prisma.application.create({
     data: {
       userId,
@@ -75,6 +96,7 @@ export async function createApplication(
       role,
       source,
       notes,
+      resumeId,
       stageEvents: {
         create: {
           fromStage: null,
@@ -106,6 +128,9 @@ export async function updateApplication(
   const source = trimOptional(formData.get("source"));
   const notes = trimOptional(formData.get("notes"));
 
+  const resumeId = await resolveResumeId(formData, userId);
+  if (typeof resumeId !== "string" && resumeId !== null) return resumeId;
+
   const existing = await getApplication(id, userId);
   if (!existing) {
     return { error: "Application not found." };
@@ -113,7 +138,7 @@ export async function updateApplication(
 
   await prisma.application.update({
     where: { id },
-    data: { company, role, source, notes },
+    data: { company, role, source, notes, resumeId },
   });
 
   revalidatePath("/pipeline");

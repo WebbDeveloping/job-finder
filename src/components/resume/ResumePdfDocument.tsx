@@ -30,20 +30,35 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 22,
     fontFamily: "Helvetica-Bold",
-    marginBottom: 4,
+    flex: 1,
+    paddingRight: 8,
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 6,
   },
   contactRow: {
     fontSize: 9,
     color: "#444",
-    marginBottom: 2,
+    textAlign: "right",
+    maxWidth: 220,
   },
-  linkRow: {
+  linksRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
     fontSize: 9,
     marginBottom: 2,
   },
-  link: {
+  linkItem: {
     color: "#1565c0",
     textDecoration: "none",
+  },
+  linkSeparator: {
+    marginHorizontal: 5,
+    color: "#666",
   },
   section: {
     marginTop: 14,
@@ -125,19 +140,27 @@ export function ResumePdfDocument({ data }: ResumePdfDocumentProps) {
   return (
     <Document title={`${data.fullName.trim()} — Resume`}>
       <Page size="LETTER" style={styles.page}>
-        <Text style={styles.name}>{data.fullName.trim()}</Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.name}>{data.fullName.trim()}</Text>
+          {contactParts.length > 0 && (
+            <Text style={styles.contactRow}>{contactParts.join(" · ")}</Text>
+          )}
+        </View>
 
-        {contactParts.length > 0 && (
-          <Text style={styles.contactRow}>{contactParts.join(" · ")}</Text>
-        )}
-
-        {linkParts.map((url) => (
-          <View key={url} style={styles.linkRow}>
-            <Link src={url} style={styles.link}>
-              <Text>{url}</Text>
-            </Link>
+        {linkParts.length > 0 && (
+          <View style={styles.linksRow}>
+            {linkParts.map((url, index) => (
+              <View key={url} style={{ flexDirection: "row", alignItems: "center" }}>
+                <Link src={url} style={styles.linkItem}>
+                  <Text>{url}</Text>
+                </Link>
+                {index < linkParts.length - 1 && (
+                  <Text style={styles.linkSeparator}>·</Text>
+                )}
+              </View>
+            ))}
           </View>
-        ))}
+        )}
 
         {data.summary.trim() !== "" && (
           <Section title="Summary">

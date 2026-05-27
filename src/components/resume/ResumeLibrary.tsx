@@ -9,6 +9,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
 import StarIcon from "@mui/icons-material/Star";
 import StarOutlineOutlinedIcon from "@mui/icons-material/StarOutlineOutlined";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
@@ -19,6 +20,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Button from "@mui/material/Button";
@@ -33,15 +35,9 @@ import {
   setDefaultResumeAction,
 } from "@/app/(app)/resume/actions";
 import { ResumeDownloadButton } from "@/components/resume/ResumeDownloadButton";
+import { ResumePreviewDialog } from "@/components/resume/ResumePreviewDialog";
 import { formatDateTime } from "@/lib/datetime";
-
-export type ResumeLibraryItem = {
-  id: string;
-  kind: "BUILT" | "UPLOADED";
-  label: string;
-  isDefault: boolean;
-  updatedAt: string;
-};
+import type { ResumeLibraryItem } from "@/lib/resume-types";
 
 type ResumeLibraryProps = {
   resumes: ResumeLibraryItem[];
@@ -59,6 +55,9 @@ export function ResumeLibrary({ resumes, selectedId }: ResumeLibraryProps) {
   const [renameResumeId, setRenameResumeId] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteResumeId, setDeleteResumeId] = useState<string | null>(null);
+  const [previewResume, setPreviewResume] = useState<ResumeLibraryItem | null>(
+    null,
+  );
 
   const menuResume = resumes.find((r) => r.id === menuResumeId) ?? null;
   const renameResume = resumes.find((r) => r.id === renameResumeId) ?? null;
@@ -68,6 +67,14 @@ export function ResumeLibrary({ resumes, selectedId }: ResumeLibraryProps) {
     resumes.find((r) => r.isDefault) ??
     resumes[0] ??
     null;
+
+  function openPreview(resume: ResumeLibraryItem) {
+    setPreviewResume(resume);
+  }
+
+  function closePreview() {
+    setPreviewResume(null);
+  }
 
   function openMenu(event: React.MouseEvent<HTMLElement>, resumeId: string) {
     setMenuAnchor(event.currentTarget);
@@ -136,41 +143,60 @@ export function ResumeLibrary({ resumes, selectedId }: ResumeLibraryProps) {
               <IconButton
                 edge="end"
                 aria-label={`Actions for ${resume.label}`}
-                onClick={(e) => openMenu(e, resume.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openMenu(e, resume.id);
+                }}
                 disabled={isPending}
               >
                 <MoreVertIcon />
               </IconButton>
             }
           >
-            <ListItemIcon sx={{ minWidth: 40, pl: 1.5 }}>
-              {resume.kind === "BUILT" ? (
-                <ArticleOutlinedIcon color="primary" />
-              ) : (
-                <PictureAsPdfOutlinedIcon color="action" />
-              )}
-            </ListItemIcon>
-            <ListItemText
-              primary={
-                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                  <Typography variant="subtitle1">{resume.label}</Typography>
-                  {resume.isDefault ? (
-                    <Chip label="Default" size="small" color="primary" variant="outlined" />
-                  ) : null}
-                  <Chip
-                    label={resume.kind === "BUILT" ? "Built" : "Uploaded"}
-                    size="small"
-                    variant="outlined"
-                  />
-                </Stack>
-              }
-              secondary={`Updated ${formatDateTime(new Date(resume.updatedAt))}`}
-            />
+            <ListItemButton
+              onClick={() => openPreview(resume)}
+              aria-label={`View ${resume.label}`}
+            >
+              <ListItemIcon sx={{ minWidth: 40 }}>
+                {resume.kind === "BUILT" ? (
+                  <ArticleOutlinedIcon color="primary" />
+                ) : (
+                  <PictureAsPdfOutlinedIcon color="action" />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primary={
+                  <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                    <Typography variant="subtitle1">{resume.label}</Typography>
+                    {resume.isDefault ? (
+                      <Chip label="Default" size="small" color="primary" variant="outlined" />
+                    ) : null}
+                    <Chip
+                      label={resume.kind === "BUILT" ? "Built" : "Uploaded"}
+                      size="small"
+                      variant="outlined"
+                    />
+                  </Stack>
+                }
+                secondary={`Updated ${formatDateTime(new Date(resume.updatedAt))}`}
+              />
+            </ListItemButton>
           </ListItem>
         ))}
       </List>
 
       <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={closeMenu}>
+        {menuResume ? (
+          <MenuItem
+            onClick={() => {
+              closeMenu();
+              openPreview(menuResume);
+            }}
+          >
+            <VisibilityOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
+            View
+          </MenuItem>
+        ) : null}
         {menuResume?.kind === "BUILT" ? (
           <MenuItem
             onClick={() => {
@@ -277,6 +303,13 @@ export function ResumeLibrary({ resumes, selectedId }: ResumeLibraryProps) {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <ResumePreviewDialog
+        resume={previewResume}
+        open={previewResume !== null}
+        onClose={closePreview}
+        onEdit={(resumeId) => router.push(`/resume?id=${resumeId}`)}
+      />
     </Box>
   );
 }

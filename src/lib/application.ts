@@ -1,9 +1,15 @@
-import type { Application, Stage, StageEvent } from "@/generated/prisma/client";
+import type {
+  Application,
+  Resume,
+  Stage,
+  StageEvent,
+} from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { isTerminalStage } from "@/lib/stages";
 
 export type ApplicationWithEvents = Application & {
   stageEvents: StageEvent[];
+  resume: Resume | null;
 };
 
 export function getCurrentStage(events: StageEvent[]): Stage {
@@ -37,7 +43,7 @@ export async function listApplications(
 ): Promise<ApplicationWithEvents[]> {
   return prisma.application.findMany({
     where: { userId },
-    include: { stageEvents: true },
+    include: { stageEvents: true, resume: true },
     orderBy: { updatedAt: "desc" },
   });
 }
@@ -48,6 +54,6 @@ export async function getApplication(
 ): Promise<ApplicationWithEvents | null> {
   return prisma.application.findFirst({
     where: { id, userId },
-    include: { stageEvents: true },
+    include: { stageEvents: true, resume: true },
   });
 }

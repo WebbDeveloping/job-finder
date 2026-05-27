@@ -5,6 +5,7 @@ import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { getResumeFileApiUrl } from "@/lib/resume-types";
 
 type ResumeDownloadButtonProps = {
   resumeId: string | null;
@@ -29,10 +30,7 @@ export function ResumeDownloadButton({
     setDownloading(true);
 
     try {
-      const url =
-        kind === "BUILT"
-          ? `/api/resume/pdf?resumeId=${encodeURIComponent(resumeId)}`
-          : `/api/resume/file/${encodeURIComponent(resumeId)}`;
+      const url = getResumeFileApiUrl(resumeId, kind);
 
       const response = await fetch(url);
       if (!response.ok) {

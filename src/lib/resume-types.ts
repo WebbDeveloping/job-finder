@@ -49,3 +49,24 @@ export const EMPTY_EDUCATION: ResumeEducationEntry = {
   startDate: "",
   endDate: "",
 };
+
+export function resumeKindHint(kind: "BUILT" | "UPLOADED"): string {
+  return kind === "BUILT" ? "Built" : "PDF";
+}
+
+export function getResumeFileApiUrl(
+  resumeId: string,
+  kind: "BUILT" | "UPLOADED",
+): string {
+  return kind === "BUILT"
+    ? `/api/resume/pdf?resumeId=${encodeURIComponent(resumeId)}`
+    : `/api/resume/file/${encodeURIComponent(resumeId)}`;
+}
+
+export type ResumeLibraryItem = {
+  id: string;
+  kind: "BUILT" | "UPLOADED";
+  label: string;
+  isDefault: boolean;
+  updatedAt: string;
+};

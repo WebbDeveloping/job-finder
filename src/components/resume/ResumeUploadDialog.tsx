@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -23,16 +22,15 @@ type ResumeUploadDialogProps = {
 };
 
 export function ResumeUploadDialog({ open, onClose }: ResumeUploadDialogProps) {
-  const router = useRouter();
   const [state, formAction, pending] = useActionState(uploadResume, initialState);
   const [fileName, setFileName] = useState<string | null>(null);
+  const successHandled = useRef(false);
 
   useEffect(() => {
-    if (state.success) {
-      onClose();
-      router.refresh();
-    }
-  }, [state.success, onClose, router]);
+    if (!state.success || successHandled.current) return;
+    successHandled.current = true;
+    onClose();
+  }, [state.success, onClose]);
 
   function handleClose() {
     if (pending) return;

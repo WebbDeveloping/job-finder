@@ -70,14 +70,14 @@ export default async function DashboardPage() {
         Quick actions
       </Typography>
       <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ mb: 4 }}>
-        <NextLinkButton href="/pipeline/new" variant="contained">
+        <NextLinkButton href="/applications/new" variant="contained">
           Add application
         </NextLinkButton>
-        <NextLinkButton href="/pipeline" variant="outlined">
-          View pipeline
+        <NextLinkButton href="/applications" variant="outlined">
+          View applications
         </NextLinkButton>
-        <NextLinkButton href="/pipeline/analytics" variant="outlined">
-          Analytics
+        <NextLinkButton href="/pipeline" variant="outlined">
+          Job tracker
         </NextLinkButton>
         <NextLinkButton href="/resume" variant="outlined">
           Resume

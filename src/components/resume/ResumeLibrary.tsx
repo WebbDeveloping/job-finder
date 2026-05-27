@@ -188,7 +188,7 @@ export function ResumeLibrary({ resumes, selectedId }: ResumeLibraryProps) {
           <MenuItem
             onClick={() => {
               closeMenu();
-              router.push(`/resume?id=${menuResume.id}`);
+              router.push(`/resume/create?id=${menuResume.id}`);
             }}
           >
             <EditOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
@@ -318,7 +318,7 @@ export function ResumeLibrary({ resumes, selectedId }: ResumeLibraryProps) {
         resume={previewResume}
         open={previewResume !== null}
         onClose={closePreview}
-        onEdit={(resumeId) => router.push(`/resume?id=${resumeId}`)}
+        onEdit={(resumeId) => router.push(`/resume/create?id=${resumeId}`)}
       />
     </Box>
   );

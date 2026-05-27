@@ -22,7 +22,7 @@ function sortStageEventsByRecency(events: StageEvent[]): StageEvent[] {
 }
 
 export function getCurrentStage(events: StageEvent[]): Stage {
-  if (events.length === 0) return "Wishlist";
+  if (events.length === 0) return "JobsAppliedTo";
   return sortStageEventsByRecency(events)[0]!.toStage;
 }
 

@@ -126,7 +126,7 @@ export function SankeyPanel({ graph, applicationsById }: SankeyPanelProps) {
                   >
                     <Box>
                       <NextMuiLink
-                        href={`/pipeline/${app.id}`}
+                        href={`/applications/${app.id}`}
                         underline="hover"
                         sx={{ fontWeight: 500 }}
                       >

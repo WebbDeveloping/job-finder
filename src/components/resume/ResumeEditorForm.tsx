@@ -7,6 +7,9 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import Stepper from "@mui/material/Stepper";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -27,6 +30,7 @@ type ResumeEditorFormProps = {
 };
 
 const initialState: ResumeActionState = {};
+const steps = ["Basics", "Summary", "Experience", "Education", "Review"] as const;
 
 function newExperience(): ResumeExperienceEntry {
   return { ...EMPTY_EXPERIENCE, id: crypto.randomUUID() };
@@ -53,7 +57,7 @@ export function ResumeEditorForm({
 
   useEffect(() => {
     if (state.success && state.resumeId && !resumeId) {
-      router.replace(`/resume?id=${state.resumeId}`);
+      router.replace(`/resume/create?id=${state.resumeId}`);
     }
   }, [state.success, state.resumeId, resumeId, router]);
 
@@ -63,6 +67,7 @@ export function ResumeEditorForm({
   const [education, setEducation] = useState(() =>
     ensureList(defaultValues.education, newEducation),
   );
+  const [activeStep, setActiveStep] = useState(0);
 
   function updateExperience(
     id: string,
@@ -102,6 +107,10 @@ export function ResumeEditorForm({
     });
   }
 
+  function isStepVisible(stepIndex: number) {
+    return activeStep === stepIndex;
+  }
+
   return (
     <Stack
       component="form"
@@ -125,7 +134,15 @@ export function ResumeEditorForm({
         <input type="hidden" name="resumeId" value={resumeId} readOnly />
       ) : null}
 
-      <Box>
+      <Stepper activeStep={activeStep} alternativeLabel>
+        {steps.map((step) => (
+          <Step key={step}>
+            <StepLabel>{step}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+
+      <Box sx={{ display: isStepVisible(0) ? "block" : "none" }}>
         <Typography variant="h6" gutterBottom>
           Label
         </Typography>
@@ -140,9 +157,7 @@ export function ResumeEditorForm({
         />
       </Box>
 
-      <Divider />
-
-      <Box>
+      <Box sx={{ display: isStepVisible(0) ? "block" : "none" }}>
         <Typography variant="h6" gutterBottom>
           Contact
         </Typography>
@@ -210,9 +225,7 @@ export function ResumeEditorForm({
         </Stack>
       </Box>
 
-      <Divider />
-
-      <Box>
+      <Box sx={{ display: isStepVisible(1) ? "block" : "none" }}>
         <Typography variant="h6" gutterBottom>
           Summary
         </Typography>
@@ -227,9 +240,7 @@ export function ResumeEditorForm({
         />
       </Box>
 
-      <Divider />
-
-      <Box>
+      <Box sx={{ display: isStepVisible(1) ? "block" : "none" }}>
         <Typography variant="h6" gutterBottom>
           Skills
         </Typography>
@@ -246,9 +257,7 @@ export function ResumeEditorForm({
         />
       </Box>
 
-      <Divider />
-
-      <Box>
+      <Box sx={{ display: isStepVisible(2) ? "block" : "none" }}>
         <Stack
           direction="row"
           sx={{
@@ -353,9 +362,7 @@ export function ResumeEditorForm({
         </Stack>
       </Box>
 
-      <Divider />
-
-      <Box>
+      <Box sx={{ display: isStepVisible(3) ? "block" : "none" }}>
         <Stack
           direction="row"
           sx={{
@@ -451,14 +458,45 @@ export function ResumeEditorForm({
         </Stack>
       </Box>
 
+      <Box sx={{ display: isStepVisible(4) ? "block" : "none" }}>
+        <Typography variant="h6" gutterBottom>
+          Review
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Confirm your details, then save your resume to your library.
+        </Typography>
+      </Box>
+
       {state.error && <Alert severity="error">{state.error}</Alert>}
       {state.success && (
         <Alert severity="success">Resume saved.</Alert>
       )}
 
-      <Button type="submit" variant="contained" disabled={pending}>
-        {pending ? "Saving…" : "Save resume"}
-      </Button>
+      <Divider />
+
+      <Stack direction="row" spacing={1} sx={{ justifyContent: "space-between" }}>
+        <Button
+          type="button"
+          variant="text"
+          disabled={activeStep === 0 || pending}
+          onClick={() => setActiveStep((step) => step - 1)}
+        >
+          Back
+        </Button>
+        {activeStep < steps.length - 1 ? (
+          <Button
+            type="button"
+            variant="contained"
+            onClick={() => setActiveStep((step) => step + 1)}
+          >
+            Next
+          </Button>
+        ) : (
+          <Button type="submit" variant="contained" disabled={pending}>
+            {pending ? "Saving..." : "Save resume"}
+          </Button>
+        )}
+      </Stack>
     </Stack>
   );
 }

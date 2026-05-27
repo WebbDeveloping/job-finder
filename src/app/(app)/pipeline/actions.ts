@@ -84,6 +84,8 @@ export async function createApplication(
   if (typeof role !== "string") return role;
 
   const source = trimOptional(formData.get("source"));
+  const companyWebsite = trimOptional(formData.get("companyWebsite"));
+  const salaryRange = trimOptional(formData.get("salaryRange"));
   const notes = trimOptional(formData.get("notes"));
 
   const resumeId = await resolveResumeId(formData, userId);
@@ -95,21 +97,24 @@ export async function createApplication(
       company,
       role,
       source,
+      companyWebsite,
+      salaryRange,
       notes,
       resumeId,
       stageEvents: {
         create: {
           fromStage: null,
-          toStage: "Wishlist",
+          toStage: "JobsAppliedTo",
           timestamp: new Date(),
         },
       },
     },
   });
 
+  revalidatePath("/applications");
   revalidatePath("/pipeline");
   revalidatePath("/dashboard");
-  redirect(`/pipeline/${application.id}`);
+  redirect(`/applications/${application.id}`);
 }
 
 export async function updateApplication(
@@ -126,6 +131,8 @@ export async function updateApplication(
   if (typeof role !== "string") return role;
 
   const source = trimOptional(formData.get("source"));
+  const companyWebsite = trimOptional(formData.get("companyWebsite"));
+  const salaryRange = trimOptional(formData.get("salaryRange"));
   const notes = trimOptional(formData.get("notes"));
 
   const resumeId = await resolveResumeId(formData, userId);
@@ -138,11 +145,12 @@ export async function updateApplication(
 
   await prisma.application.update({
     where: { id },
-    data: { company, role, source, notes, resumeId },
+    data: { company, role, source, companyWebsite, salaryRange, notes, resumeId },
   });
 
+  revalidatePath("/applications");
+  revalidatePath(`/applications/${id}`);
   revalidatePath("/pipeline");
-  revalidatePath(`/pipeline/${id}`);
   return {};
 }
 
@@ -191,8 +199,9 @@ export async function logStageChange(
     data: { updatedAt: new Date() },
   });
 
+  revalidatePath("/applications");
   revalidatePath("/pipeline");
   revalidatePath("/dashboard");
-  revalidatePath(`/pipeline/${applicationId}`);
+  revalidatePath(`/applications/${applicationId}`);
   return {};
 }

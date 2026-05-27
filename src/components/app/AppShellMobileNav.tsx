@@ -7,7 +7,8 @@ import NextLink from "next/link";
 
 const links = [
   { href: "/dashboard", label: "Home", prefix: "/dashboard" },
-  { href: "/pipeline", label: "Pipeline", prefix: "/pipeline" },
+  { href: "/applications", label: "Applications", prefix: "/applications" },
+  { href: "/pipeline", label: "Job Tracker", prefix: "/pipeline" },
   { href: "/resume", label: "Resume", prefix: "/resume" },
   { href: "/settings", label: "Settings", prefix: "/settings" },
 ] as const;

@@ -1,30 +1,48 @@
 import type { Stage } from "@/generated/prisma/client";
 
-/** Active funnel stages in typical order (SWE job search). */
+/** Active funnel stages in custom order for this app. */
 export const PIPELINE_STAGES: Stage[] = [
-  "Wishlist",
-  "Applied",
-  "Recruiter",
-  "TakeHome",
-  "Technical",
-  "Onsite",
-  "Offer",
+  "JobsAppliedTo",
+  "Replies",
+  "InitialInterview",
+  "Interview2",
+  "Interview3",
+  "TaskRequested",
+  "FinalInterview",
+  "OfferReceived",
 ];
 
-export const TERMINAL_STAGES: Stage[] = ["Rejected", "Withdrawn", "Accepted"];
+export const TERMINAL_STAGES: Stage[] = [
+  "Rejection",
+  "NoReply",
+  "RepliedTooLate",
+  "NoTaskRequested",
+  "RejectedByMe",
+  "RejectedByCompany",
+  "RejectedBeforeOffer",
+  "Accepted",
+  "Rejected",
+];
 
 export const ALL_STAGES: Stage[] = [...PIPELINE_STAGES, ...TERMINAL_STAGES];
 
 export const STAGE_LABELS: Record<Stage, string> = {
-  Wishlist: "Wishlist",
-  Applied: "Applied",
-  Recruiter: "Recruiter screen",
-  TakeHome: "Take-home",
-  Technical: "Technical interview",
-  Onsite: "Onsite / loop",
-  Offer: "Offer",
+  JobsAppliedTo: "Jobs applied to",
+  Replies: "Replies",
+  Rejection: "Rejection",
+  NoReply: "No Reply",
+  InitialInterview: "Initial Interview",
+  Interview2: "Interview 2",
+  Interview3: "Interview 3",
+  RepliedTooLate: "Replied too late",
+  TaskRequested: "Task Requested",
+  NoTaskRequested: "No task requested",
+  RejectedByMe: "Rejected by Me",
+  RejectedByCompany: "Rejected by Company",
+  FinalInterview: "Final Interview",
+  OfferReceived: "Offer received",
+  RejectedBeforeOffer: "Rejected before offer",
   Rejected: "Rejected",
-  Withdrawn: "Withdrawn",
   Accepted: "Accepted",
 };
 

@@ -263,7 +263,7 @@ export function DashboardApplicationsList({
                 <TableRow key={app.id} hover>
                   <TableCell>
                     <NextMuiLink
-                      href={`/pipeline/${app.id}`}
+                      href={`/applications/${app.id}`}
                       underline="hover"
                       sx={{ fontWeight: 500 }}
                     >

@@ -68,7 +68,7 @@ export function SankeyFilters({
           <Button type="submit" variant="contained">
             Apply
           </Button>
-          <NextLinkButton href="/pipeline/analytics" variant="outlined">
+          <NextLinkButton href="/pipeline" variant="outlined">
             Clear
           </NextLinkButton>
         </Box>

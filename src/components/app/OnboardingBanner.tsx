@@ -22,7 +22,7 @@ export function OnboardingBanner({
       {!hasApplications ? (
         <>
           Start by adding your first job application to your pipeline.{" "}
-          <NextLinkButton href="/pipeline/new" size="small" variant="outlined" sx={{ ml: 1 }}>
+          <NextLinkButton href="/applications/new" size="small" variant="outlined" sx={{ ml: 1 }}>
             Add application
           </NextLinkButton>
         </>

@@ -34,6 +34,8 @@ type ApplicationFormProps = {
     company: string;
     role: string;
     source: string;
+    companyWebsite?: string;
+    salaryRange?: string;
     notes: string;
     resumeId?: string | null;
   };
@@ -87,6 +89,24 @@ export function ApplicationForm({
         fullWidth
         placeholder="LinkedIn, referral, etc."
         defaultValue={defaultValues?.source ?? ""}
+      />
+
+      <TextField
+        id="companyWebsite"
+        name="companyWebsite"
+        label="Company website (optional)"
+        fullWidth
+        placeholder="https://company.com"
+        defaultValue={defaultValues?.companyWebsite ?? ""}
+      />
+
+      <TextField
+        id="salaryRange"
+        name="salaryRange"
+        label="Salary / salary range (optional)"
+        fullWidth
+        placeholder="$120k-$150k"
+        defaultValue={defaultValues?.salaryRange ?? ""}
       />
 
       <FormControl fullWidth>

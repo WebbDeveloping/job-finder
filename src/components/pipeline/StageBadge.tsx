@@ -9,8 +9,16 @@ type StageBadgeProps = {
 
 function chipColor(stage: Stage): ChipProps["color"] {
   if (stage === "Accepted") return "success";
-  if (stage === "Rejected" || stage === "Withdrawn") return "error";
-  if (stage === "Offer") return "success";
+  if (
+    stage === "Rejected" ||
+    stage === "Rejection" ||
+    stage === "RejectedByMe" ||
+    stage === "RejectedByCompany" ||
+    stage === "RejectedBeforeOffer"
+  ) {
+    return "error";
+  }
+  if (stage === "OfferReceived") return "success";
   if (isTerminalStage(stage)) return "warning";
   return "default";
 }

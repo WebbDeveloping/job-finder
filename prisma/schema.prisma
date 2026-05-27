@@ -10,16 +10,23 @@ datasource db {
 }
 
 enum Stage {
-  Wishlist
-  Applied
-  Recruiter
-  TakeHome
-  Technical
-  Onsite
-  Offer
-  Rejected
-  Withdrawn
+  JobsAppliedTo
+  Replies
+  Rejection
+  NoReply
+  InitialInterview
+  Interview2
+  Interview3
+  RepliedTooLate
+  TaskRequested
+  NoTaskRequested
+  RejectedByMe
+  RejectedByCompany
+  FinalInterview
+  OfferReceived
+  RejectedBeforeOffer
   Accepted
+  Rejected
 }
 
 model User {
@@ -82,6 +89,8 @@ model Application {
   role        String
   source      String?
   notes       String?
+  companyWebsite String?
+  salaryRange     String?
   resumeId    String?
   resume      Resume?      @relation(fields: [resumeId], references: [id], onDelete: SetNull)
   createdAt   DateTime     @default(now())

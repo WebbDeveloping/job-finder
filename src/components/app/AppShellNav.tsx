@@ -1,13 +1,15 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
+import AddIcon from "@mui/icons-material/Add";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
+import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
 import Box from "@mui/material/Box";
+import Collapse from "@mui/material/Collapse";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -15,40 +17,77 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { NextMuiLink } from "@/components/NextMuiLink";
 
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", match: "dashboard", icon: DashboardOutlinedIcon },
-  { href: "/pipeline", label: "Pipeline", match: "pipeline", icon: TimelineOutlinedIcon },
-  {
-    href: "/pipeline/analytics",
-    label: "Analytics",
-    match: "analytics",
-    icon: BarChartOutlinedIcon,
-  },
-  { href: "/resume", label: "Resume", match: "resume", icon: DescriptionOutlinedIcon },
+const topLevelItems = [
+  { href: "/dashboard", label: "Dashboard", match: "dashboard" as const, icon: DashboardOutlinedIcon },
+  { href: "/applications", label: "Applications", match: "applications" as const, icon: WorkOutlineOutlinedIcon },
 ] as const;
 
-function isActive(pathname: string, match: (typeof navItems)[number]["match"]): boolean {
+const resumeSubItems = [
+  { href: "/resume", label: "View Resumes", match: "resume-list" as const },
+  { href: "/resume/create", label: "Create Resume", match: "resume-create" as const },
+  { href: "/resume/upload", label: "Upload Resume", match: "resume-upload" as const },
+] as const;
+
+function isApplicationsSection(pathname: string): boolean {
+  return pathname === "/applications" || pathname.startsWith("/applications/");
+}
+
+function isJobTrackerSection(pathname: string): boolean {
+  return pathname === "/pipeline" || pathname.startsWith("/pipeline/");
+}
+
+function isResumeSection(pathname: string): boolean {
+  return pathname === "/resume" || pathname.startsWith("/resume/");
+}
+
+function isTopLevelActive(
+  pathname: string,
+  match: (typeof topLevelItems)[number]["match"],
+): boolean {
   if (match === "dashboard") {
     return pathname === "/dashboard";
   }
-  if (match === "analytics") {
-    return pathname === "/pipeline/analytics";
-  }
-  if (match === "resume") {
-    return pathname === "/resume" || pathname.startsWith("/resume/");
-  }
-  if (match === "pipeline") {
-    return (
-      pathname === "/pipeline" ||
-      pathname === "/pipeline/new" ||
-      /^\/pipeline\/[^/]+$/.test(pathname)
-    );
+  if (match === "applications") {
+    return isApplicationsSection(pathname);
   }
   return false;
 }
 
+function isResumeSubActive(
+  pathname: string,
+  match: (typeof resumeSubItems)[number]["match"],
+): boolean {
+  if (match === "resume-list") {
+    return pathname === "/resume";
+  }
+  if (match === "resume-create") {
+    return pathname === "/resume/create";
+  }
+  return pathname === "/resume/upload";
+}
+
+const listItemSx = {
+  borderRadius: 1,
+  mb: 0.5,
+  "&.Mui-selected": {
+    bgcolor: "primary.main",
+    color: "primary.contrastText",
+    "& .MuiListItemIcon-root": { color: "inherit" },
+    "&:hover": { bgcolor: "primary.dark" },
+  },
+};
+
+const pipelineSubItemSx = {
+  ...listItemSx,
+  pl: 4,
+  py: 0.75,
+  "& .MuiListItemText-primary": { fontSize: "0.875rem" },
+};
+
 export function AppShellNav() {
   const pathname = usePathname();
+  const jobTrackerOpen = isJobTrackerSection(pathname);
+  const resumeOpen = isResumeSection(pathname);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -69,32 +108,82 @@ export function AppShellNav() {
         </NextMuiLink>
       </Box>
       <List component="nav" sx={{ px: 1, flexGrow: 1 }}>
-        {navItems.map(({ href, label, match, icon: Icon }) => {
-          const active = isActive(pathname, match);
-          return (
-            <ListItemButton
-              key={href}
-              component={NextMuiLink}
-              href={href}
-              selected={active}
-              sx={{
-                borderRadius: 1,
-                mb: 0.5,
-                "&.Mui-selected": {
-                  bgcolor: "primary.main",
-                  color: "primary.contrastText",
-                  "& .MuiListItemIcon-root": { color: "inherit" },
-                  "&:hover": { bgcolor: "primary.dark" },
-                },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 40 }}>
-                <Icon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText primary={label} />
-            </ListItemButton>
-          );
-        })}
+        <ListItemButton
+          component={NextMuiLink}
+          href="/dashboard"
+          selected={isTopLevelActive(pathname, "dashboard")}
+          sx={listItemSx}
+        >
+          <ListItemIcon sx={{ minWidth: 40 }}>
+            <DashboardOutlinedIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary="Dashboard" />
+        </ListItemButton>
+
+        <ListItemButton
+          component={NextMuiLink}
+          href="/applications"
+          selected={isTopLevelActive(pathname, "applications")}
+          sx={listItemSx}
+        >
+          <ListItemIcon sx={{ minWidth: 40 }}>
+            <WorkOutlineOutlinedIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary="Applications" />
+        </ListItemButton>
+
+        <ListItemButton
+          component={NextMuiLink}
+          href="/pipeline"
+          selected={jobTrackerOpen}
+          sx={listItemSx}
+        >
+          <ListItemIcon sx={{ minWidth: 40 }}>
+            <TimelineOutlinedIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary="Job Tracker" />
+        </ListItemButton>
+
+        <ListItemButton
+          component={NextMuiLink}
+          href="/resume"
+          sx={{
+            ...listItemSx,
+            ...(resumeOpen && {
+              color: "text.primary",
+              fontWeight: 600,
+            }),
+          }}
+        >
+          <ListItemIcon sx={{ minWidth: 40 }}>
+            <DescriptionOutlinedIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary="Resume" />
+        </ListItemButton>
+        <Collapse in={resumeOpen} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding dense>
+            {resumeSubItems.map(({ href, label, match }) => (
+              <ListItemButton
+                key={href}
+                component={NextMuiLink}
+                href={href}
+                selected={isResumeSubActive(pathname, match)}
+                sx={pipelineSubItemSx}
+              >
+                <ListItemIcon sx={{ minWidth: 32 }}>
+                  {match === "resume-create" ? (
+                    <AddIcon fontSize="small" />
+                  ) : match === "resume-upload" ? (
+                    <UploadFileOutlinedIcon fontSize="small" />
+                  ) : (
+                    <DescriptionOutlinedIcon fontSize="small" />
+                  )}
+                </ListItemIcon>
+                <ListItemText primary={label} />
+              </ListItemButton>
+            ))}
+          </List>
+        </Collapse>
       </List>
       <Divider />
       <List sx={{ px: 1, py: 1 }}>

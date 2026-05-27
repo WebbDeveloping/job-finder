@@ -24,6 +24,7 @@ export const authConfig = {
 
       const isProtected =
         pathname.startsWith("/dashboard") ||
+        pathname.startsWith("/applications") ||
         pathname.startsWith("/pipeline") ||
         pathname.startsWith("/resume") ||
         pathname.startsWith("/settings") ||

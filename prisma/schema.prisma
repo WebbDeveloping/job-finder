@@ -139,6 +139,12 @@ model Resume {
   experience Json?
   education  Json?
 
+  /// Built-resume layout key, e.g. "classic", "sidebar"
+  templateId String @default("classic")
+
+  /// User overrides merged onto template defaults (colors, fonts, section order, etc.)
+  theme Json?
+
   fileName   String?
   mimeType   String?
   fileSize   Int?

@@ -16,4 +16,6 @@ One document per phase. Implement **one phase per chat**.
 
 **Resume features:** Phase 13 → Phase 14. Prefer completing both before Phase 10 (public resume).
 
+**Resume templates (RT phases):** [../resume-templates/](../resume-templates/) — RT-0 through RT-3 after Phase 13; optional RT-4.
+
 Master index: [../PLAN.md](../PLAN.md)

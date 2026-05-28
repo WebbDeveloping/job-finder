@@ -43,6 +43,7 @@ Do NOT: {phase-specific exclusions from phase doc}
 | 12 | Large feature work — ops and compliance only |
 | 13 | Link resumes to applications (Phase 14); public `/r/[slug]`; DOCX upload; PDF parsing |
 | 14 | New resume types, upload storage, or resume library UI (Phase 13) |
+| RT-0–RT-4 | See [resume-templates/](./resume-templates/); one RT phase per chat; exclusions in each RT phase doc |
 
 ## Definition of done (every phase)
 

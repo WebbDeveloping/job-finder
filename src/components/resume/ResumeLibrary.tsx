@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
+import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -32,6 +33,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import {
   deleteResumeAction,
+  duplicateResumeAction,
   renameResumeAction,
   setDefaultResumeAction,
 } from "@/app/(app)/resume/actions";
@@ -144,8 +146,24 @@ export function ResumeLibrary({ resumes, selectedId }: ResumeLibraryProps) {
               onClick={() => openPreview(resume)}
               aria-label={`View ${resume.label}`}
             >
-              <ListItemIcon sx={{ minWidth: 40 }}>
-                {resume.kind === "BUILT" ? (
+              <ListItemIcon sx={{ minWidth: resume.templateThumbnailSrc ? 56 : 40 }}>
+                {resume.kind === "BUILT" && resume.templateThumbnailSrc ? (
+                  <Box
+                    component="img"
+                    src={resume.templateThumbnailSrc}
+                    alt=""
+                    sx={{
+                      width: 40,
+                      height: 52,
+                      objectFit: "cover",
+                      objectPosition: "top",
+                      borderRadius: 0.5,
+                      border: 1,
+                      borderColor: "divider",
+                      bgcolor: "grey.100",
+                    }}
+                  />
+                ) : resume.kind === "BUILT" ? (
                   <ArticleOutlinedIcon color="primary" />
                 ) : (
                   <PictureAsPdfOutlinedIcon color="action" />
@@ -165,7 +183,11 @@ export function ResumeLibrary({ resumes, selectedId }: ResumeLibraryProps) {
                     />
                   </Stack>
                 }
-                secondary={`Updated ${formatDateTime(new Date(resume.updatedAt))}`}
+                secondary={
+                  resume.kind === "BUILT" && resume.templateLabel
+                    ? `${resume.templateLabel} · Updated ${formatDateTime(new Date(resume.updatedAt))}`
+                    : `Updated ${formatDateTime(new Date(resume.updatedAt))}`
+                }
               />
             </ListItemButton>
           </ListItem>
@@ -193,6 +215,18 @@ export function ResumeLibrary({ resumes, selectedId }: ResumeLibraryProps) {
           >
             <EditOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
             Edit
+          </MenuItem>
+        ) : null}
+        {menuResume?.kind === "BUILT" ? (
+          <MenuItem
+            disabled={isPending}
+            onClick={() => {
+              if (!menuResume) return;
+              runAction(() => duplicateResumeAction(menuResume.id));
+            }}
+          >
+            <ContentCopyOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
+            Duplicate
           </MenuItem>
         ) : null}
         {menuResume ? (

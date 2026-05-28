@@ -4,6 +4,7 @@ import {
   getDefaultBuiltResume,
   getResume,
   isBuiltResume,
+  toResumeDesign,
   toResumeFormData,
 } from "@/lib/resume";
 import { generateResumePdf } from "@/lib/resume-pdf";
@@ -40,7 +41,8 @@ export async function GET(request: Request) {
     }
 
     const data = toResumeFormData(resume);
-    const { buffer, filename } = await generateResumePdf(data);
+    const design = toResumeDesign(resume);
+    const { buffer, filename } = await generateResumePdf(data, design);
 
     return new NextResponse(new Uint8Array(buffer), {
       status: 200,

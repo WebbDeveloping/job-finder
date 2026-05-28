@@ -5,7 +5,8 @@ import { NextLinkButton } from "@/components/NextLinkButton";
 import { ResumeEditorForm } from "@/components/resume/ResumeEditorForm";
 import { ResumePageActions } from "@/components/resume/ResumePageActions";
 import { requireUserId } from "@/lib/auth";
-import { getResume, isBuiltResume, toResumeFormData } from "@/lib/resume";
+import { assertTemplateId } from "@/lib/resume-templates/registry";
+import { getResume, isBuiltResume, toResumeDesign, toResumeFormData } from "@/lib/resume";
 import type { ResumeProfileFormData } from "@/lib/resume-types";
 
 const emptyDefaults: ResumeProfileFormData = {
@@ -45,17 +46,27 @@ export default async function ResumeCreatePage({
 
   return (
     <Box>
-      <Stack spacing={2} sx={{ mb: 4 }}>
-        <Box>
-          <Typography variant="h4" component="h1" gutterBottom>
+      <Box sx={{ mb: 4 }}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          sx={{
+            justifyContent: "space-between",
+            alignItems: { xs: "flex-start", sm: "center" },
+            mb: 1,
+          }}
+        >
+          <Typography variant="h4" component="h1" sx={{ mb: 0 }}>
             {editingId ? "Edit resume" : "Create resume"}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Build your resume in steps and save it to your library.
-          </Typography>
-        </Box>
-        <ResumePageActions />
-      </Stack>
+          <Box sx={{ alignSelf: { xs: "flex-end", sm: "auto" }, flexShrink: 0 }}>
+            <ResumePageActions />
+          </Box>
+        </Stack>
+        <Typography variant="body2" color="text.secondary">
+          Fill in each section and see your resume update live as you type.
+        </Typography>
+      </Box>
 
       {editingId && !editorResume ? (
         <Typography color="error">
@@ -70,6 +81,14 @@ export default async function ResumeCreatePage({
           defaultValues={defaultValues}
           resumeId={editorResume?.id ?? null}
           label={editorResume?.label ?? ""}
+          defaultTemplateId={
+            editorResume
+              ? assertTemplateId(editorResume.templateId)
+              : undefined
+          }
+          defaultTheme={
+            editorResume ? toResumeDesign(editorResume).theme : null
+          }
         />
       )}
     </Box>

@@ -9,9 +9,8 @@ import {
 } from "@/components/resume/ResumeLibrary";
 import { ResumePageActions } from "@/components/resume/ResumePageActions";
 import { requireUserId } from "@/lib/auth";
-import {
-  listResumes,
-} from "@/lib/resume";
+import { getTemplate } from "@/lib/resume-templates/registry";
+import { listResumes } from "@/lib/resume";
 import type { ResumeLibraryItem } from "@/lib/resume-types";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +25,12 @@ export default async function ResumePage() {
     label: r.label,
     isDefault: r.isDefault,
     updatedAt: r.updatedAt.toISOString(),
+    ...(r.kind === "BUILT"
+      ? {
+          templateLabel: getTemplate(r.templateId).label,
+          templateThumbnailSrc: getTemplate(r.templateId).thumbnailSrc,
+        }
+      : {}),
   }));
 
   return (

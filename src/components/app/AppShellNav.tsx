@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import AddIcon from "@mui/icons-material/Add";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
@@ -189,14 +189,14 @@ export function AppShellNav() {
       <List sx={{ px: 1, py: 1 }}>
         <ListItemButton
           component={NextMuiLink}
-          href="/settings"
-          selected={pathname === "/settings"}
+          href="/profile"
+          selected={pathname === "/profile" || pathname.startsWith("/settings")}
           sx={{ borderRadius: 1 }}
         >
           <ListItemIcon sx={{ minWidth: 40 }}>
-            <SettingsOutlinedIcon fontSize="small" />
+            <PersonOutlinedIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText primary="Settings" />
+          <ListItemText primary="Profile" />
         </ListItemButton>
       </List>
     </Box>

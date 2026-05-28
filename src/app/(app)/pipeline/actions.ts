@@ -205,3 +205,21 @@ export async function logStageChange(
   revalidatePath(`/applications/${applicationId}`);
   return {};
 }
+
+export async function deleteApplication(applicationId: string): Promise<void> {
+  const userId = await requireUserId();
+
+  const existing = await getApplication(applicationId, userId);
+  if (!existing) {
+    throw new Error("Application not found.");
+  }
+
+  await prisma.application.deleteMany({
+    where: { id: applicationId, userId },
+  });
+
+  revalidatePath("/applications");
+  revalidatePath("/pipeline");
+  revalidatePath("/dashboard");
+  redirect("/applications");
+}

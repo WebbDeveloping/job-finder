@@ -10,12 +10,19 @@ const links = [
   { href: "/applications", label: "Applications", prefix: "/applications" },
   { href: "/pipeline", label: "Job Tracker", prefix: "/pipeline" },
   { href: "/resume", label: "Resume", prefix: "/resume" },
-  { href: "/settings", label: "Settings", prefix: "/settings" },
+  { href: "/profile", label: "Profile", prefix: "/profile" },
 ] as const;
 
 function isLinkActive(pathname: string, prefix: string): boolean {
   if (prefix === "/pipeline") {
     return pathname.startsWith("/pipeline");
+  }
+  if (prefix === "/profile") {
+    return (
+      pathname === "/profile" ||
+      pathname.startsWith("/profile/") ||
+      pathname.startsWith("/settings")
+    );
   }
   return pathname === prefix || pathname.startsWith(`${prefix}/`);
 }

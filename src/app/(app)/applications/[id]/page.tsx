@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { NextMuiLink } from "@/components/NextMuiLink";
+import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import { NextMuiLink } from "@/components/NextMuiLink";
 import { ApplicationForm } from "@/components/pipeline/ApplicationForm";
 import { ApplicationResumeSection } from "@/components/pipeline/ApplicationResumeSection";
+import { DeleteApplicationButton } from "@/components/pipeline/DeleteApplicationButton";
 import { StageChangeForm } from "@/components/pipeline/StageChangeForm";
 import { StageHistory } from "@/components/pipeline/StageHistory";
 import { getApplication, getCurrentStage } from "@/lib/application";
@@ -124,6 +126,20 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
         </Typography>
         <StageHistory events={application.stageEvents} />
       </Box>
+
+      <Paper variant="outlined" sx={{ mt: 6, p: 3, maxWidth: 480 }}>
+        <Typography variant="h6" component="h2" gutterBottom color="error">
+          Danger zone
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Permanently remove this application and its stage history.
+        </Typography>
+        <DeleteApplicationButton
+          applicationId={application.id}
+          company={application.company}
+          role={application.role}
+        />
+      </Paper>
     </Box>
   );
 }

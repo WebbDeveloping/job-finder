@@ -25,7 +25,7 @@ export type {
 
 export { DEFAULT_RESUME_DESIGN } from "@/lib/resume-design";
 
-export type ResumeProfileFormData = {
+export type CareerProfileData = {
   fullName: string;
   email: string;
   phone: string | null;
@@ -38,6 +38,9 @@ export type ResumeProfileFormData = {
   experience: ResumeExperienceEntry[];
   education: ResumeEducationEntry[];
 };
+
+/** Built-resume editor shape; same fields as {@link CareerProfileData}. */
+export type ResumeProfileFormData = CareerProfileData;
 
 export const EMPTY_EXPERIENCE: ResumeExperienceEntry = {
   id: "",

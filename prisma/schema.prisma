@@ -46,6 +46,28 @@ model User {
   sessions      Session[]
   applications Application[]
   resumes      Resume[]
+  userProfile  UserProfile?
+}
+
+model UserProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fullName  String?
+  email     String?
+  phone     String?
+  location  String?
+  website   String?
+  linkedIn  String?
+  github    String?
+  summary   String?
+  skills    String?
+  experience Json?
+  education  Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Account {

@@ -98,15 +98,7 @@ export function ResumeEditorForm({
   const [pendingTemplateId, setPendingTemplateId] = useState<string | null>(
     null,
   );
-  const [requireTemplateConfirm, setRequireTemplateConfirm] = useState(
-    () => Boolean(resumeId),
-  );
-
-  useEffect(() => {
-    if (state.success) {
-      setRequireTemplateConfirm(true);
-    }
-  }, [state.success]);
+  const requireTemplateConfirm = Boolean(resumeId || state.success);
 
   const syncPreview = useCallback(() => {
     const form = formRef.current;

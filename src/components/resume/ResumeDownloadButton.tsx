@@ -10,12 +10,14 @@ import { downloadResumeFile } from "@/lib/resume-download";
 type ResumeDownloadButtonProps = {
   resumeId: string | null;
   kind: "BUILT" | "UPLOADED" | null;
+  resumeLabel?: string | null;
   disabled?: boolean;
 };
 
 export function ResumeDownloadButton({
   resumeId,
   kind,
+  resumeLabel = null,
   disabled = false,
 }: ResumeDownloadButtonProps) {
   const [downloading, setDownloading] = useState(false);
@@ -30,7 +32,7 @@ export function ResumeDownloadButton({
     setDownloading(true);
 
     try {
-      await downloadResumeFile(resumeId, kind);
+      await downloadResumeFile(resumeId, kind, resumeLabel ?? undefined);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Download failed.");
     } finally {

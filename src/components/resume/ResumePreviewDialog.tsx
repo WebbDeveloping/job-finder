@@ -11,6 +11,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { ResumePdfPagesViewer } from "@/components/resume/ResumePdfPagesViewer";
 import type { ResumeLibraryItem } from "@/lib/resume-types";
 import { getResumeFileApiUrl, resumeKindHint } from "@/lib/resume-types";
 
@@ -36,21 +37,25 @@ export function ResumePreviewDialog({
 
   useEffect(() => {
     if (!open || !resumeId || !resumeKind) {
-      setPreviewUrl((current) => {
-        if (current) URL.revokeObjectURL(current);
-        return null;
+      queueMicrotask(() => {
+        setPreviewUrl((current) => {
+          if (current) URL.revokeObjectURL(current);
+          return null;
+        });
+        setError(null);
+        setLoading(false);
       });
-      setError(null);
-      setLoading(false);
       return;
     }
 
     let cancelled = false;
     let objectUrl: string | null = null;
 
-    setLoading(true);
-    setError(null);
-    setPreviewUrl(null);
+    queueMicrotask(() => {
+      setLoading(true);
+      setError(null);
+      setPreviewUrl(null);
+    });
 
     fetch(getResumeFileApiUrl(resumeId, resumeKind))
       .then(async (response) => {
@@ -142,17 +147,7 @@ export function ResumePreviewDialog({
               {error}
             </Alert>
           ) : previewUrl ? (
-            <Box
-              component="iframe"
-              src={previewUrl}
-              title={resume ? `Preview: ${resume.label}` : "Resume preview"}
-              sx={{
-                width: "100%",
-                height: "100%",
-                border: 0,
-                bgcolor: "background.paper",
-              }}
-            />
+            <ResumePdfPagesViewer fileUrl={previewUrl} />
           ) : null}
         </Box>
       </DialogContent>

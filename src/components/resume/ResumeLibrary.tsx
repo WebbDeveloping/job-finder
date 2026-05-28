@@ -237,7 +237,11 @@ export function ResumeLibrary({ resumes, selectedId }: ResumeLibraryProps) {
               closeMenu();
               setError(null);
               setDownloading(true);
-              void downloadResumeFile(menuResume.id, menuResume.kind).catch(
+              void downloadResumeFile(
+                menuResume.id,
+                menuResume.kind,
+                menuResume.label,
+              ).catch(
                 (err) => {
                   setError(
                     err instanceof Error ? err.message : "Download failed.",

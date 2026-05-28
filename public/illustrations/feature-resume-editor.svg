@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 400" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="editor-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#E3F2FD"/>
+    </linearGradient>
+    <filter id="editor-shadow" x="-6%" y="-6%" width="112%" height="114%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#1976D2" flood-opacity="0.14"/>
+    </filter>
+    <linearGradient id="preview-shine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#fff" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="520" height="400" rx="20" fill="url(#editor-bg)"/>
+  <rect x="40" y="328" width="200" height="48" rx="10" fill="#BBDEFB" opacity="0.5"/>
+  <rect x="280" y="328" width="200" height="48" rx="10" fill="#1976D2" opacity="0.08"/>
+  <!-- editor panel -->
+  <g filter="url(#editor-shadow)">
+    <rect x="48" y="48" width="200" height="264" rx="14" fill="#fff" stroke="#1976D2" stroke-width="2"/>
+  </g>
+  <rect x="64" y="64" width="80" height="10" rx="5" fill="#1976D2" opacity="0.2"/>
+  <rect x="64" y="88" width="168" height="48" rx="8" fill="#F5F9FF" stroke="#90CAF9" stroke-width="1.5"/>
+  <rect x="72" y="100" width="56" height="6" rx="3" fill="#1976D2" opacity="0.35"/>
+  <rect x="72" y="114" width="120" height="5" rx="2.5" fill="#BBDEFB"/>
+  <rect x="72" y="126" width="96" height="5" rx="2.5" fill="#E3F2FD"/>
+  <rect x="64" y="148" width="168" height="48" rx="8" fill="#fff" stroke="#1976D2" stroke-width="1.5"/>
+  <rect x="72" y="160" width="48" height="6" rx="3" fill="#1976D2" opacity="0.3"/>
+  <rect x="72" y="174" width="136" height="5" rx="2.5" fill="#90CAF9"/>
+  <rect x="72" y="186" width="104" height="5" rx="2.5" fill="#BBDEFB"/>
+  <rect x="64" y="208" width="168" height="40" rx="8" fill="#F5F9FF" stroke="#E3F2FD" stroke-width="1.5"/>
+  <rect x="72" y="220" width="40" height="5" rx="2.5" fill="#90CAF9"/>
+  <rect x="72" y="232" width="80" height="5" rx="2.5" fill="#BBDEFB"/>
+  <!-- active field highlight -->
+  <rect x="64" y="260" width="168" height="36" rx="8" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/>
+  <rect x="72" y="272" width="100" height="6" rx="3" fill="#1976D2" opacity="0.45"/>
+  <rect x="72" y="284" width="72" height="5" rx="2.5" fill="#90CAF9"/>
+  <!-- live preview chip -->
+  <rect x="72" y="312" width="88" height="22" rx="11" fill="#1976D2"/>
+  <circle cx="86" cy="323" r="4" fill="#66BB6A"/>
+  <text x="96" y="327" font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="#fff">Live preview</text>
+  <!-- preview panel -->
+  <g filter="url(#editor-shadow)">
+    <rect x="272" y="40" width="200" height="280" rx="14" fill="#fff" stroke="#1976D2" stroke-width="2"/>
+  </g>
+  <rect x="288" y="56" width="168" height="12" rx="4" fill="#1976D2" opacity="0.12"/>
+  <circle cx="320" cy="108" r="24" fill="#E3F2FD" stroke="#90CAF9" stroke-width="2"/>
+  <circle cx="320" cy="102" r="10" fill="#90CAF9"/>
+  <path d="M300 128c8-12 16-18 20-18s12 6 20 18" fill="#BBDEFB"/>
+  <rect x="296" y="148" width="136" height="8" rx="4" fill="#1976D2" opacity="0.35"/>
+  <rect x="296" y="164" width="152" height="5" rx="2.5" fill="#90CAF9"/>
+  <rect x="296" y="176" width="140" height="5" rx="2.5" fill="#BBDEFB"/>
+  <rect x="296" y="188" width="120" height="5" rx="2.5" fill="#BBDEFB"/>
+  <rect x="296" y="208" width="64" height="6" rx="3" fill="#1976D2" opacity="0.25"/>
+  <rect x="296" y="222" width="152" height="5" rx="2.5" fill="#E3F2FD"/>
+  <rect x="296" y="234" width="128" height="5" rx="2.5" fill="#E3F2FD"/>
+  <rect x="296" y="246" width="144" height="5" rx="2.5" fill="#E3F2FD"/>
+  <rect x="296" y="266" width="80" height="5" rx="2.5" fill="#90CAF9"/>
+  <rect x="296" y="278" width="112" height="5" rx="2.5" fill="#BBDEFB"/>
+  <rect x="288" y="56" width="168" height="240" rx="8" fill="url(#preview-shine)" opacity="0.35" pointer-events="none"/>
+  <!-- PDF export -->
+  <rect x="312" y="336" width="120" height="40" rx="10" fill="#1976D2"/>
+  <rect x="324" y="346" width="14" height="18" rx="2" fill="#fff"/>
+  <path d="M327 360h8l3-5 3 5h2" fill="#1976D2"/>
+  <text x="346" y="361" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#fff">Export PDF</text>
+  <!-- sync arrow -->
+  <path d="M252 168h16" stroke="#1976D2" stroke-width="2" stroke-linecap="round"/>
+  <path d="M260 160l8 8-8 8" stroke="#1976D2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <circle cx="260" cy="168" r="20" fill="#1976D2" opacity="0.1"/>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 400" fill="none" aria-hidden="true">
+  <rect x="148" y="18" width="224" height="32" rx="16" fill="#1976D2"/>
+  <text x="172" y="39" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#fff">Application tracker</text>
+  <rect x="24" y="320" width="140" height="28" rx="14" fill="#fff" fill-opacity="0.95"/>
+  <text x="38" y="339" font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="#1976D2">Wishlist ’ Offer</text>
+  <rect x="340" y="300" width="148" height="28" rx="14" fill="#E3F2FD" stroke="#1976D2" stroke-width="1.5"/>
+  <text x="354" y="319" font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="#1976D2">Filter &amp; sort</text>
+  <circle cx="400" cy="80" r="6" fill="#FFC107"/>
+</svg>

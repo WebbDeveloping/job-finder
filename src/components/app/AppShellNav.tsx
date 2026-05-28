@@ -15,6 +15,7 @@ import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import Typography from "@mui/material/Typography";
 import { NextMuiLink } from "@/components/NextMuiLink";
 
 const topLevelItems = [
@@ -100,11 +101,12 @@ export function AppShellNav() {
             alignItems: "center",
             gap: 1,
             color: "text.primary",
-            fontWeight: 700,
           }}
         >
           <WorkOutlineOutlinedIcon color="primary" fontSize="small" aria-hidden />
-          Job Finder
+          <Typography variant="appFormGroupTitle" component="span">
+            Job Finder
+          </Typography>
         </NextMuiLink>
       </Box>
       <List component="nav" sx={{ px: 1, flexGrow: 1 }}>
@@ -147,13 +149,8 @@ export function AppShellNav() {
         <ListItemButton
           component={NextMuiLink}
           href="/resume"
-          sx={{
-            ...listItemSx,
-            ...(resumeOpen && {
-              color: "text.primary",
-              fontWeight: 600,
-            }),
-          }}
+          selected={resumeOpen}
+          sx={listItemSx}
         >
           <ListItemIcon sx={{ minWidth: 40 }}>
             <DescriptionOutlinedIcon fontSize="small" />
@@ -191,7 +188,7 @@ export function AppShellNav() {
           component={NextMuiLink}
           href="/profile"
           selected={pathname === "/profile" || pathname.startsWith("/settings")}
-          sx={{ borderRadius: 1 }}
+          sx={listItemSx}
         >
           <ListItemIcon sx={{ minWidth: 40 }}>
             <PersonOutlinedIcon fontSize="small" />

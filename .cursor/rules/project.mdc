@@ -7,7 +7,7 @@ globs:
 # Job Finder
 
 - Next.js App Router under `src/app/`
-- **UI: MUI only** — use `@mui/material` components, `ThemeRegistry` + `src/theme/theme.ts`. Do not add Tailwind or utility-class styling for layout/components.
+- **UI: MUI only** — use `@mui/material` components, `ThemeRegistry` + `src/theme/theme.ts`. Follow [docs/DESIGN.md](../../docs/DESIGN.md). Do not add Tailwind or utility-class styling for layout/components.
 - App Router cache: `@mui/material-nextjs/v16-appRouter` via `ThemeRegistry`
 - **Database:** PostgreSQL ([docs/DATABASE.md](../../docs/DATABASE.md)); `PrismaClient` + `@prisma/adapter-pg` in `src/lib/prisma.ts` (no SQLite).
 - Import `PrismaClient` from `@/generated/prisma/client` (generated output, not `@prisma/client`)

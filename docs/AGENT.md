@@ -56,11 +56,19 @@ Do NOT: {phase-specific exclusions from phase doc}
 
 ## Conventions (unchanged)
 
-- UI: **MUI only** — no Tailwind
+- UI: **MUI only** — no Tailwind; follow [DESIGN.md](./DESIGN.md)
 - DB access: only via `src/lib/prisma.ts`
 - Import client from `@/generated/prisma/client`
 - Server Actions for mutations where the app already uses them
 - See `.cursor/rules/project.mdc`
+
+## UI definition of done
+
+- [ ] Uses theme typography variants (no inline `fontWeight`)
+- [ ] Uses `src/components/ui/` primitives where applicable
+- [ ] No hex/rgb color literals in components
+- [ ] One `h1` per page; sections use `aria-labelledby` on marketing pages
+- [ ] See [DESIGN.md](./DESIGN.md) for marketing vs app patterns
 
 ## Postgres reminder
 

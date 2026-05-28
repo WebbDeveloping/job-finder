@@ -1,0 +1,33 @@
+---
+description: Marketing page UI conventions
+globs:
+  - "src/components/marketing/**"
+---
+
+# Marketing UI
+
+See [src/components/marketing/AGENTS.md](../../src/components/marketing/AGENTS.md) and [docs/DESIGN.md](../../docs/DESIGN.md).
+
+## Section structure
+
+```tsx
+<MarketingSection tone="light" headingId="section-heading">
+  <MarketingSectionHeader titleId="section-heading" title="..." lead="..." />
+  {/* content */}
+</MarketingSection>
+```
+
+## Padding
+
+Use `py` on `MarketingSection`: `default` | `hero` | `compact` | `spacious` — do not invent custom `py` values.
+
+## Dark bands
+
+- Standard dark: `tone="dark"` → `background.dark`
+- Finale CTA: `tone="darkAccent"` → `primary.dark`
+- Body on dark: `color="grey.300"` for muted text
+- CTA: `InvertedButton`
+
+## Typography variants
+
+`marketingHeroTitle`, `marketingSectionTitle`, `marketingFeatureTitle`, `marketingLead`, `marketingStat` only.

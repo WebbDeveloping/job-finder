@@ -1,10 +1,14 @@
 import { redirect } from "next/navigation";
-import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import { FeatureGrid } from "@/components/marketing/FeatureGrid";
+import { ForApplicantsSection } from "@/components/marketing/ForApplicantsSection";
+import { QuoteCarouselSection } from "@/components/marketing/QuoteCarouselSection";
 import { LandingHero } from "@/components/marketing/LandingHero";
-import { NextLinkButton } from "@/components/NextLinkButton";
+import { ResumeBuilderFeaturesSection } from "@/components/marketing/ResumeBuilderFeaturesSection";
+import { AtsSection } from "@/components/marketing/AtsSection";
+import { StatsSection } from "@/components/marketing/StatsSection";
+import { HowItHelpsSection } from "@/components/marketing/HowItHelpsSection";
+import { JobSearchHubSection } from "@/components/marketing/JobSearchHubSection";
+import { ResumePickerSection } from "@/components/marketing/ResumePickerSection";
+import { TestimonialsSection } from "@/components/marketing/TestimonialsSection";
 import { auth } from "@/lib/auth";
 
 export default async function LandingPage() {
@@ -16,37 +20,15 @@ export default async function LandingPage() {
   return (
     <>
       <LandingHero />
-
-      <Container maxWidth="lg" sx={{ pb: 10 }}>
-        <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 600 }}>
-          Everything you need in one place
-        </Typography>
-        <FeatureGrid />
-
-        <Paper
-          variant="outlined"
-          sx={{
-            mt: 8,
-            p: { xs: 3, md: 5 },
-            textAlign: "center",
-            bgcolor: "background.paper",
-          }}
-        >
-          <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 600 }}>
-            Ready to take control of your search?
-          </Typography>
-          <Typography
-            variant="body1"
-            color="text.secondary"
-            sx={{ mb: 3, maxWidth: 480, mx: "auto" }}
-          >
-            Create a free account and add your first application in minutes.
-          </Typography>
-          <NextLinkButton href="/signup" variant="contained" size="large">
-            Create free account
-          </NextLinkButton>
-        </Paper>
-      </Container>
+      <ResumeBuilderFeaturesSection />
+      <StatsSection />
+      <AtsSection />
+      <TestimonialsSection />
+      <HowItHelpsSection />
+      <ResumePickerSection />
+      <JobSearchHubSection />
+      <ForApplicantsSection />
+      <QuoteCarouselSection />
     </>
   );
 }

@@ -1,7 +1,8 @@
 import Box from "@mui/material/Box";
-import { NextMuiLink } from "@/components/NextMuiLink";
 import Typography from "@mui/material/Typography";
 import { ApplicationForm } from "@/components/pipeline/ApplicationForm";
+import { FormColumn } from "@/components/ui/FormColumn";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { requireUserId } from "@/lib/auth";
 import { getDefaultResume, listResumes } from "@/lib/resume";
 
@@ -22,27 +23,19 @@ export default async function NewApplicationPage() {
 
   return (
     <Box>
-      <NextMuiLink
-        href="/applications"
-        underline="hover"
-        variant="body2"
-        color="text.secondary"
-      >
-        ← Back to applications
-      </NextMuiLink>
-      <Typography variant="h4" component="h1" sx={{ mt: 2 }}>
-        Add application
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-        New applications start on your wishlist until you submit.
-      </Typography>
-      <Box sx={{ mt: 4, maxWidth: 480 }}>
+      <PageHeader
+        title="Add application"
+        subtitle="New applications start on your wishlist until you submit."
+        backHref="/applications"
+        backLabel="Back to applications"
+      />
+      <FormColumn>
         <ApplicationForm
           mode="create"
           resumes={resumeOptions}
           defaultResumeId={defaultResume?.id ?? null}
         />
-      </Box>
+      </FormColumn>
     </Box>
   );
 }

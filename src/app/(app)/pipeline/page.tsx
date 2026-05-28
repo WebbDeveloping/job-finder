@@ -1,8 +1,7 @@
 import Box from "@mui/material/Box";
 import { NextLinkButton } from "@/components/NextLinkButton";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { EmptyStatePanel } from "@/components/ui/EmptyStatePanel";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { SankeyFilters } from "@/components/pipeline/SankeyFilters";
 import { SankeyPanel } from "@/components/pipeline/SankeyPanel";
 import { aggregateSankeyGraph } from "@/lib/sankey/aggregate";
@@ -52,40 +51,29 @@ export default async function JobTrackerPage({
 
   return (
     <Box>
-      <Box>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Job Tracker
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Sankey flow of stage transitions across your applications.
-        </Typography>
-      </Box>
+      <PageHeader
+        title="Job Tracker"
+        subtitle="Sankey flow of stage transitions across your applications."
+      />
 
-      <Box sx={{ mt: 3 }}>
-        <SankeyFilters
-          sources={sources}
-          dateFrom={params.from ?? ""}
-          dateTo={params.to ?? ""}
-          source={params.source ?? ""}
-        />
-      </Box>
+      <SankeyFilters
+        sources={sources}
+        dateFrom={params.from ?? ""}
+        dateTo={params.to ?? ""}
+        source={params.source ?? ""}
+      />
 
       {!hasAnyEvents ? (
-        <Paper
-          variant="outlined"
-          sx={{ mt: 6, py: 6, px: 3, borderStyle: "dashed" }}
-        >
-          <EmptyState
-            illustrationSrc="/illustrations/empty-pipeline.svg"
-            title="No stage events yet"
-            description="Log stage changes on an application to visualize your funnel here."
-            action={
-              <NextLinkButton href="/applications" variant="contained">
-                Add application
-              </NextLinkButton>
-            }
-          />
-        </Paper>
+        <EmptyStatePanel
+          illustrationSrc="/illustrations/empty-pipeline.svg"
+          title="No stage events yet"
+          description="Log stage changes on an application to visualize your funnel here."
+          action={
+            <NextLinkButton href="/applications" variant="contained">
+              Add application
+            </NextLinkButton>
+          }
+        />
       ) : (
         <SankeyPanel graph={graph} applicationsById={applicationsById} />
       )}

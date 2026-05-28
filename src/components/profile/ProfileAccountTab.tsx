@@ -1,11 +1,11 @@
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { DeleteAccountButton } from "@/components/profile/DeleteAccountButton";
+import { AppCard } from "@/components/ui/AppCard";
+import { DangerZone } from "@/components/ui/DangerZone";
 
 type ProfileAccountTabProps = {
   email: string;
@@ -15,11 +15,11 @@ type ProfileAccountTabProps = {
 export function ProfileAccountTab({ email, plan }: ProfileAccountTabProps) {
   return (
     <Stack spacing={3}>
-      <Paper variant="outlined" sx={{ p: 3 }}>
-        <Typography variant="h6" component="h2" gutterBottom>
-          Account
-        </Typography>
+      <AppCard padding="card">
         <Stack spacing={2}>
+          <Typography variant="appSectionTitle" component="h2">
+            Account
+          </Typography>
           <TextField
             label="Email"
             value={email}
@@ -28,29 +28,26 @@ export function ProfileAccountTab({ email, plan }: ProfileAccountTabProps) {
             helperText="Email cannot be changed."
           />
         </Stack>
-      </Paper>
+      </AppCard>
 
-      <Paper variant="outlined" sx={{ p: 3 }}>
-        <Typography variant="h6" component="h2" gutterBottom>
-          Billing
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          You are on the <strong>{plan}</strong> plan.
-        </Typography>
-        <Button variant="outlined" disabled>
-          Upgrade to Pro — coming soon
-        </Button>
-      </Paper>
+      <AppCard padding="card">
+        <Stack spacing={2}>
+          <Typography variant="appSectionTitle" component="h2">
+            Billing
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            You are on the <strong>{plan}</strong> plan.
+          </Typography>
+          <Button variant="outlined" disabled>
+            Upgrade to Pro — coming soon
+          </Button>
+        </Stack>
+      </AppCard>
 
-      <Paper variant="outlined" sx={{ p: 3 }}>
-        <Typography variant="h6" component="h2" gutterBottom color="error">
-          Danger zone
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Permanently delete your account and all associated data.
-        </Typography>
-        <DeleteAccountButton />
-      </Paper>
+      <DangerZone
+        description="Permanently delete your account and all associated data."
+        action={<DeleteAccountButton />}
+      />
 
       <Divider />
       <Typography variant="caption" color="text.secondary">

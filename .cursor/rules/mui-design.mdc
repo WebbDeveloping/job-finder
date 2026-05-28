@@ -1,0 +1,47 @@
+---
+description: MUI design system — tokens, primitives, consistency
+globs:
+  - "src/components/**"
+  - "src/app/**"
+---
+
+# MUI Design System
+
+Read [docs/DESIGN.md](../../docs/DESIGN.md) before adding or changing UI.
+
+## Stack
+
+- MUI only — `@mui/material`, theme in `src/theme/`
+- Primitives in `src/components/ui/`
+
+## NEVER
+
+- Hard-coded colors (`#`, `rgb()`, `rgba()`)
+- Inline `fontWeight` on Typography — use theme variants
+- Custom Button/Card when a ui primitive exists
+- Tailwind or utility-class layout
+
+## ALWAYS
+
+- Check `src/components/ui/` before creating new UI
+- Use typography variants: `marketing*` for landing, `app*` for dashboard
+- Use palette keys: `primary.main`, `text.secondary`, `background.dark`, etc.
+- One `h1` per page
+
+## Imports
+
+| Need | Import |
+|------|--------|
+| Marketing section | `@/components/ui/MarketingSection` |
+| Marketing heading | `@/components/ui/MarketingSectionHeader` |
+| App page title | `@/components/ui/PageHeader` |
+| App section | `@/components/ui/PageSection` |
+| Card surface | `@/components/ui/AppCard` |
+| Empty state | `@/components/ui/EmptyStatePanel` |
+| Form layout | `@/components/ui/FormColumn` |
+| Dark CTA | `@/components/ui/InvertedButton` |
+| Stars | `@/components/ui/StarRating` |
+
+## sx rule
+
+If an `sx` block exceeds ~15 lines, extract to a primitive or theme token.

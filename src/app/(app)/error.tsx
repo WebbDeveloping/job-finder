@@ -1,9 +1,10 @@
 "use client";
 
 import Alert from "@mui/material/Alert";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { FormColumn } from "@/components/ui/FormColumn";
 
 type ErrorPageProps = {
   error: Error & { digest?: string };
@@ -12,16 +13,18 @@ type ErrorPageProps = {
 
 export default function AppError({ error, reset }: ErrorPageProps) {
   return (
-    <Box sx={{ maxWidth: 480 }}>
-      <Typography variant="h5" component="h1" gutterBottom>
-        Something went wrong
-      </Typography>
-      <Alert severity="error" sx={{ mb: 3 }}>
-        {error.message || "An unexpected error occurred. Please try again."}
-      </Alert>
-      <Button variant="contained" onClick={reset}>
-        Try again
-      </Button>
-    </Box>
+    <FormColumn>
+      <Stack spacing={3}>
+        <Typography variant="appPageTitle" component="h1">
+          Something went wrong
+        </Typography>
+        <Alert severity="error">
+          {error.message || "An unexpected error occurred. Please try again."}
+        </Alert>
+        <Button variant="contained" onClick={reset} sx={{ alignSelf: "flex-start" }}>
+          Try again
+        </Button>
+      </Stack>
+    </FormColumn>
   );
 }

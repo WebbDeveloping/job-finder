@@ -7,7 +7,6 @@ import type { Stage } from "@/generated/prisma/client";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -17,6 +16,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { AppCard } from "@/components/ui/AppCard";
+import { PageSection } from "@/components/ui/PageSection";
 import { formatDateTime } from "@/lib/datetime";
 import { ALL_STAGES, STAGE_LABELS } from "@/lib/stages";
 
@@ -161,16 +162,11 @@ export function DashboardApplicationsList({
   }
 
   return (
-    <Box sx={{ mt: 4 }}>
-      <Typography variant="h6" component="h2" gutterBottom>
-        Your applications
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        {applications.length} {applications.length === 1 ? "company" : "companies"} in
-        your pipeline
-      </Typography>
-
-      <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
+    <PageSection
+      title="Your applications"
+      description={`${applications.length} ${applications.length === 1 ? "company" : "companies"} in your pipeline`}
+    >
+      <AppCard padding="toolbar" sx={{ mb: 2 }}>
         <Stack
           direction={{ xs: "column", md: "row" }}
           spacing={2}
@@ -233,10 +229,10 @@ export function DashboardApplicationsList({
             ))}
           </TextField>
         </Stack>
-      </Paper>
+      </AppCard>
 
       {filtered.length === 0 ? (
-        <Paper variant="outlined" sx={{ p: 3, textAlign: "center" }}>
+        <AppCard padding="card" sx={{ textAlign: "center" }}>
           <Typography color="text.secondary" gutterBottom>
             No applications match your filters.
           </Typography>
@@ -245,10 +241,11 @@ export function DashboardApplicationsList({
               Clear filters
             </Button>
           ) : null}
-        </Paper>
+        </AppCard>
       ) : (
-        <TableContainer component={Paper} variant="outlined">
-          <Table size="small">
+        <AppCard padding="none">
+          <TableContainer>
+            <Table size="small">
             <TableHead>
               <TableRow>
                 <TableCell>Company</TableCell>
@@ -265,7 +262,6 @@ export function DashboardApplicationsList({
                     <NextMuiLink
                       href={`/applications/${app.id}`}
                       underline="hover"
-                      sx={{ fontWeight: 500 }}
                     >
                       {app.company}
                     </NextMuiLink>
@@ -284,7 +280,8 @@ export function DashboardApplicationsList({
               ))}
             </TableBody>
           </Table>
-        </TableContainer>
+          </TableContainer>
+        </AppCard>
       )}
 
       {hasActiveFilters && filtered.length > 0 ? (
@@ -292,6 +289,6 @@ export function DashboardApplicationsList({
           Showing {filtered.length} of {applications.length}
         </Typography>
       ) : null}
-    </Box>
+    </PageSection>
   );
 }

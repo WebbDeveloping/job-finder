@@ -52,7 +52,11 @@ export function ApplicationResumeSection({
           {resumeKindHint(resume.kind)}
         </Typography>
       </Box>
-      <ResumeDownloadButton resumeId={resume.id} kind={resume.kind} />
+      <ResumeDownloadButton
+        resumeId={resume.id}
+        kind={resume.kind}
+        resumeLabel={resume.label}
+      />
     </Stack>
   );
 }

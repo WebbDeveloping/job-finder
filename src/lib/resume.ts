@@ -1,6 +1,13 @@
-import type { Resume, ResumeKind } from "@/generated/prisma/client";
+import { Prisma, type Resume, type ResumeKind } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { deleteResumeFile } from "@/lib/resume-storage";
+import { DEFAULT_RESUME_DESIGN } from "@/lib/resume-design";
+import { assertTemplateId } from "@/lib/resume-templates/registry";
+import {
+  parseResumeTheme,
+  type ResumeDesign,
+  type ResumeTheme,
+} from "@/lib/resume-templates/theme";
 import type {
   ResumeEducationEntry,
   ResumeExperienceEntry,
@@ -180,6 +187,24 @@ export function validateResumeFormData(
   return null;
 }
 
+export function toResumeDesign(resume: Resume): ResumeDesign {
+  const templateId = assertTemplateId(resume.templateId);
+
+  if (resume.theme == null) {
+    return { templateId, theme: null };
+  }
+
+  const parsed = parseResumeTheme(resume.theme);
+  if ("error" in parsed) {
+    console.warn(
+      `Invalid resume theme for resume ${resume.id}: ${parsed.error}`,
+    );
+    return { templateId, theme: null };
+  }
+
+  return { templateId, theme: parsed };
+}
+
 export function toResumeFormData(resume: Resume): ResumeProfileFormData {
   const experience = parseExperienceJson(resume.experience ?? []);
   const education = parseEducationJson(resume.education ?? []);
@@ -199,7 +224,21 @@ export function toResumeFormData(resume: Resume): ResumeProfileFormData {
   };
 }
 
-function builtFieldData(data: ResumeProfileFormData) {
+function builtFieldData(
+  data: ResumeProfileFormData,
+  design: ResumeDesign = DEFAULT_RESUME_DESIGN,
+) {
+  const templateId = assertTemplateId(design.templateId);
+  let theme: ResumeTheme | null = null;
+
+  if (design.theme != null) {
+    const parsed = parseResumeTheme(design.theme);
+    if ("error" in parsed) {
+      throw new Error(parsed.error);
+    }
+    theme = Object.keys(parsed).length > 0 ? parsed : null;
+  }
+
   return {
     fullName: data.fullName.trim(),
     email: data.email.trim(),
@@ -212,6 +251,9 @@ function builtFieldData(data: ResumeProfileFormData) {
     skills: data.skills.trim(),
     experience: data.experience,
     education: data.education,
+    templateId,
+    theme:
+      theme === null ? Prisma.DbNull : (theme as Prisma.InputJsonValue),
   };
 }
 
@@ -298,6 +340,7 @@ export async function createBuiltResume(
   userId: string,
   data: ResumeProfileFormData,
   label?: string,
+  design: ResumeDesign = DEFAULT_RESUME_DESIGN,
 ): Promise<Resume> {
   const resumeLabel =
     label?.trim() ||
@@ -310,7 +353,7 @@ export async function createBuiltResume(
       kind: "BUILT",
       label: resumeLabel,
       isDefault: shouldDefault,
-      ...builtFieldData(data),
+      ...builtFieldData(data, design),
     },
   });
 }
@@ -320,6 +363,7 @@ export async function updateBuiltResume(
   resumeId: string,
   data: ResumeProfileFormData,
   label?: string,
+  design?: ResumeDesign,
 ): Promise<Resume> {
   const existing = await getResume(userId, resumeId);
   if (!existing || existing.kind !== "BUILT") {
@@ -330,12 +374,60 @@ export async function updateBuiltResume(
     where: { id: resumeId },
     data: {
       ...(label?.trim() ? { label: label.trim() } : {}),
-      ...builtFieldData(data),
+      ...builtFieldData(
+        data,
+        design ?? {
+          templateId: assertTemplateId(existing.templateId),
+          theme:
+            existing.theme != null
+              ? (() => {
+                  const parsed = parseResumeTheme(existing.theme);
+                  return "error" in parsed ? null : parsed;
+                })()
+              : null,
+        },
+      ),
     },
   });
 
   await ensureDefaultIfNone(userId, resume.id);
   return resume;
+}
+
+export async function duplicateBuiltResume(
+  userId: string,
+  resumeId: string,
+): Promise<Resume> {
+  const existing = await getResume(userId, resumeId);
+  if (!existing || existing.kind !== "BUILT") {
+    throw new Error("Built resume not found.");
+  }
+
+  const copyLabel = existing.label.trim().endsWith("(copy)")
+    ? existing.label.trim()
+    : `${existing.label.trim()} (copy)`;
+
+  return prisma.resume.create({
+    data: {
+      userId,
+      kind: "BUILT",
+      label: copyLabel,
+      isDefault: false,
+      fullName: existing.fullName,
+      email: existing.email,
+      phone: existing.phone,
+      location: existing.location,
+      website: existing.website,
+      linkedIn: existing.linkedIn,
+      github: existing.github,
+      summary: existing.summary,
+      skills: existing.skills,
+      experience: existing.experience ?? [],
+      education: existing.education ?? [],
+      templateId: assertTemplateId(existing.templateId),
+      theme: existing.theme ?? Prisma.DbNull,
+    },
+  });
 }
 
 export async function renameResume(

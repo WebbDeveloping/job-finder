@@ -10,6 +10,7 @@ Track job applications (Sankey pipeline) and build a resume with PDF download. E
 | [DATABASE.md](./DATABASE.md) | Postgres setup, migrations, Vercel |
 | [AGENT.md](./AGENT.md) | How to run one phase per chat |
 | [phases/](./phases/) | Per-phase implementation checklists |
+| [resume-templates/](./resume-templates/) | Resume templates & design (RT-0–RT-4) |
 
 ## Phases — core product (done)
 
@@ -37,6 +38,20 @@ Track job applications (Sankey pipeline) and build a resume with PDF download. E
 | **14** | Done | [phase-14-application-resume](./phases/phase-14-application-resume.md) | Select resume per job application |
 
 **Recommended order:** Complete **Phase 13** (and **14** if tracking per job) **before Phase 10** so public sharing uses the `Resume` model instead of legacy `ResumeProfile`.
+
+## Resume templates & design (RT phases)
+
+Separate from main phase numbers. **One RT phase per chat.** See [resume-templates/README.md](./resume-templates/README.md).
+
+| Phase | Status | Doc | Scope |
+|-------|--------|-----|--------|
+| **RT-0** | Pending | [phase-0-foundation](./resume-templates/phase-0-foundation.md) | Schema, theme tokens, refactor PDF → `classic` + registry |
+| **RT-1** | Pending | [phase-1-template-picker](./resume-templates/phase-1-template-picker.md) | Template gallery, second layout (`sidebar`) |
+| **RT-2** | Pending | [phase-2-customization-panel](./resume-templates/phase-2-customization-panel.md) | Colors, fonts, margins, section order/visibility |
+| **RT-3** | Pending | [phase-3-more-templates-polish](./resume-templates/phase-3-more-templates-polish.md) | More templates, change-template UX |
+| **RT-4** | Optional | [phase-4-advanced-optional](./resume-templates/phase-4-advanced-optional.md) | Live preview, photos, public share parity, etc. |
+
+**Order:** RT-0 → RT-1 → RT-2 → RT-3. Prefer completing **RT-0–RT-2** before **Phase 10** public resume so sharing can reuse `templateId` + `theme`.
 
 **Database target:** PostgreSQL only after Phase 6. See [DATABASE.md](./DATABASE.md).
 

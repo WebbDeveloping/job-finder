@@ -17,6 +17,14 @@ export type ResumeEducationEntry = {
   endDate: string;
 };
 
+export type {
+  ResumeDesign,
+  ResumeSectionId,
+  ResumeTheme,
+} from "@/lib/resume-templates/theme";
+
+export { DEFAULT_RESUME_DESIGN } from "@/lib/resume-design";
+
 export type ResumeProfileFormData = {
   fullName: string;
   email: string;
@@ -69,4 +77,8 @@ export type ResumeLibraryItem = {
   label: string;
   isDefault: boolean;
   updatedAt: string;
+  /** Built resumes only — display label from template registry */
+  templateLabel?: string;
+  /** Built resumes only — thumbnail for library list */
+  templateThumbnailSrc?: string;
 };

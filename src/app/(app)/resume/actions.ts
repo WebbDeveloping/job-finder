@@ -3,8 +3,18 @@
 import { revalidatePath } from "next/cache";
 import { requireUserId } from "@/lib/auth";
 import {
+  assertTemplateId,
+  templateSupportsSidebarWidth,
+} from "@/lib/resume-templates/registry";
+import {
+  validateResumeTheme,
+  type ResumeDesign,
+} from "@/lib/resume-templates/theme";
+import {
   createBuiltResume,
   deleteResume,
+  duplicateBuiltResume,
+  getResume,
   parseEducationJson,
   parseExperienceJson,
   renameResume,
@@ -60,6 +70,19 @@ function parseJsonField(
     return JSON.parse(value) as unknown;
   } catch {
     return { error: `${fieldName} is invalid.` };
+  }
+}
+
+function parseThemeJsonField(
+  value: FormDataEntryValue | null,
+): unknown | null | ResumeActionState {
+  if (value === null || typeof value !== "string" || value.trim() === "") {
+    return null;
+  }
+  try {
+    return JSON.parse(value) as unknown;
+  } catch {
+    return { error: "Theme is invalid." };
   }
 }
 
@@ -141,12 +164,47 @@ export async function saveBuiltResume(
       ? labelRaw.trim()
       : undefined;
 
+  const templateIdRaw = formData.get("templateId");
+  const templateId = assertTemplateId(
+    typeof templateIdRaw === "string" ? templateIdRaw : "",
+  );
+
+  const themeRaw = parseThemeJsonField(formData.get("themeJson"));
+  if (themeRaw !== null && typeof themeRaw === "object" && "error" in themeRaw) {
+    return { error: String(themeRaw.error) };
+  }
+
+  const validatedTheme = validateResumeTheme(
+    themeRaw,
+    templateId,
+    templateSupportsSidebarWidth(templateId),
+  );
+  if (validatedTheme !== null && "error" in validatedTheme) {
+    return { error: validatedTheme.error };
+  }
+
+  const design: ResumeDesign = {
+    templateId,
+    theme: validatedTheme,
+  };
+
   let savedId: string;
   if (resumeId) {
-    const updated = await updateBuiltResume(userId, resumeId, parsed, label);
+    const existing = await getResume(userId, resumeId);
+    if (!existing || existing.kind !== "BUILT") {
+      return { error: "Built resume not found." };
+    }
+
+    const updated = await updateBuiltResume(
+      userId,
+      resumeId,
+      parsed,
+      label,
+      design,
+    );
     savedId = updated.id;
   } else {
-    const created = await createBuiltResume(userId, parsed, label);
+    const created = await createBuiltResume(userId, parsed, label, design);
     savedId = created.id;
   }
 
@@ -259,6 +317,28 @@ export async function setDefaultResumeAction(
   } catch (error) {
     return {
       error: error instanceof Error ? error.message : "Could not set default.",
+    };
+  }
+
+  revalidatePath("/resume");
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
+export async function duplicateResumeAction(
+  resumeId: string,
+): Promise<ResumeActionState> {
+  const userId = await requireUserId();
+  if (!resumeId.trim()) {
+    return { error: "Resume id is required." };
+  }
+
+  try {
+    await duplicateBuiltResume(userId, resumeId.trim());
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "Could not duplicate resume.",
     };
   }
 

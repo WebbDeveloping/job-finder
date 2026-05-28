@@ -1,9 +1,7 @@
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import { NextLinkButton } from "@/components/NextLinkButton";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { EmptyStatePanel } from "@/components/ui/EmptyStatePanel";
+import { PageHeader } from "@/components/ui/PageHeader";
 import {
   ResumeLibrary,
 } from "@/components/resume/ResumeLibrary";
@@ -35,44 +33,24 @@ export default async function ResumePage() {
 
   return (
     <Box>
-      <Stack
-        direction={{ xs: "column", sm: "row" }}
-        spacing={2}
-        sx={{
-          mb: 4,
-          justifyContent: "space-between",
-          alignItems: { xs: "flex-start", sm: "center" },
-        }}
-      >
-        <Box>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Resume library
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Create built resumes, upload PDFs, and manage a default for downloads.
-          </Typography>
-        </Box>
-        <Box sx={{ alignSelf: { xs: "flex-end", sm: "auto" }, flexShrink: 0 }}>
-          <ResumePageActions />
-        </Box>
-      </Stack>
+      <PageHeader
+        title="Resume library"
+        subtitle="Create built resumes, upload PDFs, and manage a default for downloads."
+        actions={<ResumePageActions />}
+      />
 
       {resumes.length === 0 ? (
-        <Paper
-          variant="outlined"
-          sx={{ mb: 3, py: 4, px: 3, borderStyle: "dashed" }}
-        >
-          <EmptyState
-            illustrationSrc="/illustrations/empty-resume.svg"
-            title="No resumes yet"
-            description="Create a built resume in the editor or upload a PDF to start your library."
-            action={
-              <NextLinkButton href="/applications/new" variant="outlined" size="small">
-                Or track applications first
-              </NextLinkButton>
-            }
-          />
-        </Paper>
+        <EmptyStatePanel
+          illustrationSrc="/illustrations/empty-resume.svg"
+          title="No resumes yet"
+          description="Create a built resume in the editor or upload a PDF to start your library."
+          action={
+            <NextLinkButton href="/applications/new" variant="outlined" size="small">
+              Or track applications first
+            </NextLinkButton>
+          }
+          marginTop={false}
+        />
       ) : (
         <ResumeLibrary resumes={libraryItems} selectedId={null} />
       )}

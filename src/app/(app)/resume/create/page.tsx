@@ -1,8 +1,8 @@
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { NextLinkButton } from "@/components/NextLinkButton";
 import { ResumeEditorForm } from "@/components/resume/ResumeEditorForm";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { requireUser } from "@/lib/auth";
 import {
   getOrSeedUserProfile,
@@ -72,23 +72,10 @@ export default async function ResumeCreatePage({
 
   return (
     <Box>
-      <Box sx={{ mb: 4 }}>
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          spacing={2}
-          sx={{
-            alignItems: { xs: "flex-start", sm: "center" },
-            mb: 1,
-          }}
-        >
-          <Typography variant="h4" component="h1" sx={{ mb: 0 }}>
-            {editingId ? "Edit resume" : "Create resume"}
-          </Typography>
-        </Stack>
-        <Typography variant="body2" color="text.secondary">
-          Fill in each section and see your resume update live as you type.
-        </Typography>
-      </Box>
+      <PageHeader
+        title={editingId ? "Edit resume" : "Create resume"}
+        subtitle="Fill in each section and see your resume update live as you type."
+      />
 
       {editingId && !editorResume ? (
         <Typography color="error">

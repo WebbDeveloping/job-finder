@@ -1,14 +1,16 @@
 import { notFound } from "next/navigation";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { NextMuiLink } from "@/components/NextMuiLink";
 import { ApplicationForm } from "@/components/pipeline/ApplicationForm";
 import { ApplicationResumeSection } from "@/components/pipeline/ApplicationResumeSection";
 import { DeleteApplicationButton } from "@/components/pipeline/DeleteApplicationButton";
 import { StageChangeForm } from "@/components/pipeline/StageChangeForm";
 import { StageHistory } from "@/components/pipeline/StageHistory";
+import { DangerZone } from "@/components/ui/DangerZone";
+import { FormColumn } from "@/components/ui/FormColumn";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageSection } from "@/components/ui/PageSection";
 import { getApplication, getCurrentStage } from "@/lib/application";
 import { requireUserId } from "@/lib/auth";
 import { listResumes } from "@/lib/resume";
@@ -38,108 +40,96 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
     kind: resume.kind,
   }));
 
+  const metaLines = [
+    application.companyWebsite
+      ? `Website: ${application.companyWebsite}`
+      : null,
+    application.salaryRange ? `Salary: ${application.salaryRange}` : null,
+  ].filter(Boolean);
+
   return (
     <Box>
-      <NextMuiLink
-        href="/applications"
-        underline="hover"
-        variant="body2"
-        color="text.secondary"
-      >
-        ← Back to applications
-      </NextMuiLink>
-      <Typography variant="h4" component="h1" sx={{ mt: 2 }}>
-        {application.company}
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        {application.role}
-      </Typography>
+      <PageHeader
+        title={application.company}
+        subtitle={application.role}
+        backHref="/applications"
+        backLabel="Back to applications"
+      />
 
-      {application.companyWebsite && (
-        <Typography variant="body2" color="text.secondary">
-          Website: {application.companyWebsite}
-        </Typography>
-      )}
+      {metaLines.length > 0 ? (
+        <Box sx={{ mt: -2, mb: 2 }}>
+          {metaLines.map((line) => (
+            <Typography key={line} variant="body2" color="text.secondary">
+              {line}
+            </Typography>
+          ))}
+        </Box>
+      ) : null}
 
-      {application.salaryRange && (
-        <Typography variant="body2" color="text.secondary">
-          Salary: {application.salaryRange}
-        </Typography>
-      )}
+      <PageSection title="Resume used">
+        <FormColumn>
+          <ApplicationResumeSection
+            resume={
+              application.resume
+                ? {
+                    id: application.resume.id,
+                    label: application.resume.label,
+                    kind: application.resume.kind,
+                  }
+                : null
+            }
+          />
+        </FormColumn>
+      </PageSection>
 
-      <Box sx={{ mt: 4, maxWidth: 480 }}>
-        <Typography variant="h6" gutterBottom>
-          Resume used
-        </Typography>
-        <ApplicationResumeSection
-          resume={
-            application.resume
-              ? {
-                  id: application.resume.id,
-                  label: application.resume.label,
-                  kind: application.resume.kind,
-                }
-              : null
-          }
-        />
-      </Box>
-
-      <Grid container spacing={4} sx={{ mt: 4 }}>
+      <Grid container spacing={4}>
         <Grid size={{ xs: 12, lg: 6 }}>
-          <Typography variant="h6" gutterBottom>
-            Application details
-          </Typography>
-          <Box sx={{ maxWidth: 480 }}>
-            <ApplicationForm
-              mode="edit"
-              applicationId={application.id}
-              resumes={resumeOptions}
-              defaultValues={{
-                company: application.company,
-                role: application.role,
-                source: application.source ?? "",
-                companyWebsite: application.companyWebsite ?? "",
-                salaryRange: application.salaryRange ?? "",
-                notes: application.notes ?? "",
-                resumeId: application.resumeId,
-              }}
-            />
-          </Box>
+          <PageSection title="Application details">
+            <FormColumn>
+              <ApplicationForm
+                mode="edit"
+                applicationId={application.id}
+                resumes={resumeOptions}
+                defaultValues={{
+                  company: application.company,
+                  role: application.role,
+                  source: application.source ?? "",
+                  companyWebsite: application.companyWebsite ?? "",
+                  salaryRange: application.salaryRange ?? "",
+                  notes: application.notes ?? "",
+                  resumeId: application.resumeId,
+                }}
+              />
+            </FormColumn>
+          </PageSection>
         </Grid>
 
         <Grid size={{ xs: 12, lg: 6 }}>
-          <Typography variant="h6" gutterBottom>
-            Log stage change
-          </Typography>
-          <Box sx={{ maxWidth: 480 }}>
-            <StageChangeForm
-              applicationId={application.id}
-              currentStage={currentStage}
-            />
-          </Box>
+          <PageSection title="Log stage change">
+            <FormColumn>
+              <StageChangeForm
+                applicationId={application.id}
+                currentStage={currentStage}
+              />
+            </FormColumn>
+          </PageSection>
         </Grid>
       </Grid>
 
-      <Box sx={{ mt: 6 }}>
-        <Typography variant="h6" gutterBottom>
-          Stage history
-        </Typography>
+      <PageSection title="Stage history" gap="large">
         <StageHistory events={application.stageEvents} />
-      </Box>
+      </PageSection>
 
-      <Paper variant="outlined" sx={{ mt: 6, p: 3, maxWidth: 480 }}>
-        <Typography variant="h6" component="h2" gutterBottom color="error">
-          Danger zone
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Permanently remove this application and its stage history.
-        </Typography>
-        <DeleteApplicationButton
-          applicationId={application.id}
-          company={application.company}
-          role={application.role}
-        />
-      </Paper>
+      <DangerZone
+        description="Permanently remove this application and its stage history."
+        action={
+          <DeleteApplicationButton
+            applicationId={application.id}
+            company={application.company}
+            role={application.role}
+          />
+        }
+      />
     </Box>
   );
 }

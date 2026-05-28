@@ -3,12 +3,9 @@
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import StarOutlineOutlinedIcon from "@mui/icons-material/StarOutlineOutlined";
 import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import { IconBadge } from "@/components/ui/IconBadge";
+import { StatCard } from "@/components/ui/StatCard";
+import { appTokens } from "@/theme/tokens";
 
 type DashboardStatsProps = {
   applicationCount: number;
@@ -17,51 +14,27 @@ type DashboardStatsProps = {
 
 export function DashboardStats({ applicationCount, hasResume }: DashboardStatsProps) {
   return (
-    <Grid container spacing={2} sx={{ mb: 4 }}>
+    <Grid container spacing={2} sx={{ mb: appTokens.sectionGap }}>
       <Grid size={{ xs: 12, sm: 4 }}>
-        <Paper variant="outlined" sx={{ p: 3 }}>
-          <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-            <IconBadge icon={<WorkOutlineOutlinedIcon />} size={44} />
-            <Box>
-              <Typography variant="overline" color="text.secondary">
-                Applications
-              </Typography>
-              <Typography variant="h3" component="p">
-                {applicationCount}
-              </Typography>
-            </Box>
-          </Stack>
-        </Paper>
+        <StatCard
+          icon={<WorkOutlineOutlinedIcon />}
+          label="Applications"
+          value={applicationCount}
+        />
       </Grid>
       <Grid size={{ xs: 12, sm: 4 }}>
-        <Paper variant="outlined" sx={{ p: 3 }}>
-          <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-            <IconBadge icon={<DescriptionOutlinedIcon />} size={44} />
-            <Box>
-              <Typography variant="overline" color="text.secondary">
-                Resume
-              </Typography>
-              <Typography variant="h6" component="p">
-                {hasResume ? "Saved" : "Not started"}
-              </Typography>
-            </Box>
-          </Stack>
-        </Paper>
+        <StatCard
+          icon={<DescriptionOutlinedIcon />}
+          label="Resume"
+          value={hasResume ? "Saved" : "Not started"}
+        />
       </Grid>
       <Grid size={{ xs: 12, sm: 4 }}>
-        <Paper variant="outlined" sx={{ p: 3 }}>
-          <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-            <IconBadge icon={<StarOutlineOutlinedIcon />} size={44} />
-            <Box>
-              <Typography variant="overline" color="text.secondary">
-                Plan
-              </Typography>
-              <Typography variant="h6" component="p">
-                Free
-              </Typography>
-            </Box>
-          </Stack>
-        </Paper>
+        <StatCard
+          icon={<StarOutlineOutlinedIcon />}
+          label="Plan"
+          value="Free"
+        />
       </Grid>
     </Grid>
   );

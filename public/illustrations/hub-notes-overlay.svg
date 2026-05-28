@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 400" fill="none" aria-hidden="true">
+  <rect x="148" y="20" width="224" height="32" rx="16" fill="#1976D2"/>
+  <text x="168" y="41" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#fff">Application notes</text>
+  <path d="M280 180 L360 120" stroke="#90CAF9" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6"/>
+  <rect x="32" y="300" width="116" height="28" rx="14" fill="#FFF8E1" stroke="#FFC107" stroke-width="1.5"/>
+  <text x="46" y="319" font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="#F57C00">Follow-up Tue</text>
+  <rect x="360" y="72" width="120" height="28" rx="14" fill="#fff" fill-opacity="0.95"/>
+  <text x="374" y="91" font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="#1976D2">Per application</text>
+</svg>

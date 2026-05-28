@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 400" fill="none" aria-hidden="true">
+  <circle cx="400" cy="72" r="32" fill="#1976D2" opacity="0.2"/>
+  <path d="M384 72a14 14 0 0 1 26-7M406 58l3 7-9 2M406 86a14 14 0 0 1-26 7M384 86l-3-7 9-2" stroke="#90CAF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="24" y="48" width="112" height="28" rx="14" fill="#fff" fill-opacity="0.95"/>
+  <text x="38" y="67" font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="#1976D2">Swap layout</text>
+  <rect x="24" y="84" width="128" height="28" rx="14" fill="#fff" fill-opacity="0.95"/>
+  <text x="38" y="103" font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="#1565C0">Content unchanged</text>
+  <rect x="320" y="320" width="168" height="32" rx="16" fill="#1976D2"/>
+  <text x="340" y="341" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#fff">8 professional templates</text>
+</svg>

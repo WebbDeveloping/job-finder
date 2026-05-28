@@ -6,8 +6,7 @@ import { signOutAction } from "@/app/(auth)/actions";
 import { AppShellMobileNav } from "@/components/app/AppShellMobileNav";
 import { AppShellNav } from "@/components/app/AppShellNav";
 import { requireUser } from "@/lib/auth";
-
-const drawerWidth = 240;
+import { appTokens } from "@/theme/tokens";
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
   const session = await requireUser();
@@ -18,11 +17,11 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
       <Drawer
         variant="permanent"
         sx={{
-          width: drawerWidth,
+          width: appTokens.drawerWidth,
           flexShrink: 0,
           display: { xs: "none", md: "block" },
           "& .MuiDrawer-paper": {
-            width: drawerWidth,
+            width: appTokens.drawerWidth,
             boxSizing: "border-box",
             borderRight: 1,
             borderColor: "divider",
@@ -40,7 +39,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            px: { xs: 2, md: 3 },
+            px: appTokens.mainPadding,
             py: 1.5,
             bgcolor: "background.paper",
             borderBottom: 1,
@@ -48,9 +47,9 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           }}
         >
           <Typography
-            variant="subtitle2"
+            variant="appFormGroupTitle"
             color="text.secondary"
-            sx={{ display: { xs: "block", md: "none" }, fontWeight: 600 }}
+            sx={{ display: { xs: "block", md: "none" } }}
           >
             Job Finder
           </Typography>
@@ -72,7 +71,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           component="main"
           sx={{
             flexGrow: 1,
-            p: { xs: 2, md: 3 },
+            p: appTokens.mainPadding,
             maxWidth: "100%",
           }}
         >

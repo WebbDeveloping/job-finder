@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import NextLink from "next/link";
+import { appTokens } from "@/theme/tokens";
 
 const links = [
   { href: "/dashboard", label: "Home", prefix: "/dashboard" },
@@ -34,7 +35,7 @@ export function AppShellMobileNav() {
     <Box
       sx={{
         display: { xs: "flex", md: "none" },
-        gap: 0.5,
+        gap: appTokens.quickActionsGap,
         px: 1,
         py: 1,
         overflowX: "auto",

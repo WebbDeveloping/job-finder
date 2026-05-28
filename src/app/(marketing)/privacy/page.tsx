@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { MarketingSection } from "@/components/ui/MarketingSection";
+import { marketingTokens } from "@/theme/tokens";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -9,17 +10,17 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <Container maxWidth="md" sx={{ py: 6 }}>
+    <MarketingSection maxWidth={marketingTokens.containerNarrow} py="default">
       <Stack spacing={3}>
-        <Typography variant="h4" component="h1">
+        <Typography variant="marketingSectionTitle" component="h1">
           Privacy Policy
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="marketingLead" color="text.secondary">
           Job Finder stores the account and job-search data you enter (applications,
           stage history, and resume profile) to provide the service. We do not sell
           your personal information.
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="marketingLead" color="text.secondary">
           You may delete your account at any time from Settings. Deleting your
           account permanently removes your applications and resume data from our
           database.
@@ -29,6 +30,6 @@ export default function PrivacyPage() {
           be added before public launch.
         </Typography>
       </Stack>
-    </Container>
+    </MarketingSection>
   );
 }

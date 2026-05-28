@@ -19,7 +19,7 @@ export function AuthPageHeader({ mode }: AuthPageHeaderProps) {
         size={44}
       />
       <Box>
-        <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 0.5 }}>
+        <Typography variant="appAuthTitle" component="h1" gutterBottom sx={{ mb: 0.5 }}>
           {isLogin ? "Sign in" : "Create account"}
         </Typography>
         <Typography variant="body2" color="text.secondary">

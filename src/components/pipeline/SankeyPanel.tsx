@@ -10,9 +10,9 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { AppCard } from "@/components/ui/AppCard";
 import type { SankeyLinkSelection } from "@/components/pipeline/SankeyChart";
 
 const SankeyChart = dynamic(
@@ -41,6 +41,7 @@ import {
   type SankeyNodeId,
 } from "@/lib/sankey/types";
 import { formatStage } from "@/lib/stages";
+import { appTokens } from "@/theme/tokens";
 
 type ApplicationSummary = {
   id: string;
@@ -70,8 +71,8 @@ export function SankeyPanel({ graph, applicationsById }: SankeyPanelProps) {
     : [];
 
   return (
-    <Stack spacing={3} sx={{ mt: 4 }}>
-      <Paper variant="outlined" sx={{ p: 2 }}>
+    <Stack spacing={3} sx={{ mt: appTokens.sectionGap }}>
+      <AppCard padding="toolbar">
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           Band width shows how many applications moved between stages. Click a
           band to see which applications made that transition.
@@ -83,17 +84,17 @@ export function SankeyPanel({ graph, applicationsById }: SankeyPanelProps) {
           }
           onLinkSelect={setSelection}
         />
-      </Paper>
+      </AppCard>
 
       {selection && (
-        <Paper variant="outlined" sx={{ p: 2 }}>
+        <AppCard padding="toolbar">
           <Stack
             direction="row"
             spacing={2}
             sx={{ justifyContent: "space-between", alignItems: "flex-start" }}
           >
             <Box>
-              <Typography variant="h6">
+              <Typography variant="appSectionTitle" component="h2">
                 {formatTransition(selection.from, selection.to)}
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -128,7 +129,6 @@ export function SankeyPanel({ graph, applicationsById }: SankeyPanelProps) {
                       <NextMuiLink
                         href={`/applications/${app.id}`}
                         underline="hover"
-                        sx={{ fontWeight: 500 }}
                       >
                         {app.company}
                       </NextMuiLink>
@@ -143,7 +143,7 @@ export function SankeyPanel({ graph, applicationsById }: SankeyPanelProps) {
               ))}
             </List>
           )}
-        </Paper>
+        </AppCard>
       )}
     </Stack>
   );

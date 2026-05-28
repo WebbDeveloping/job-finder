@@ -61,7 +61,7 @@ export function ResumeEditorSectionNav({
               aria-controls={`${section.id}-content`}
               id={`${section.id}-header`}
             >
-              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+              <Typography variant="appFormGroupTitle">
                 {section.label}
               </Typography>
             </AccordionSummary>

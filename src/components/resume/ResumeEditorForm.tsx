@@ -21,6 +21,7 @@ import { CareerEducationList } from "@/components/career/CareerEducationList";
 import { CareerExperienceList } from "@/components/career/CareerExperienceList";
 import { CareerSummaryFields } from "@/components/career/CareerSummaryFields";
 import { NextLinkButton } from "@/components/NextLinkButton";
+import { AppCard } from "@/components/ui/AppCard";
 import { ResumeDesignPreview } from "@/components/resume/ResumeDesignPreview";
 import { ResumeEditorDesignAside } from "@/components/resume/ResumeEditorDesignAside";
 import { ResumeEditorLayout } from "@/components/resume/ResumeEditorLayout";
@@ -145,7 +146,7 @@ export function ResumeEditorForm({
       content: (
         <Stack spacing={3}>
           <Box>
-            <Typography variant="subtitle2" gutterBottom>
+            <Typography variant="appFormGroupTitle" gutterBottom>
               Label
             </Typography>
             <TextField
@@ -244,10 +245,10 @@ export function ResumeEditorForm({
   if (!editorReady) {
     return (
       <Box sx={{ width: "100%" }}>
-        <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 } }}>
+        <AppCard padding="card">
           <Stack spacing={2}>
             <Box>
-              <Typography variant="h6" component="h2" gutterBottom>
+              <Typography variant="appSectionTitle" component="h2" gutterBottom>
                 Choose a template
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -265,7 +266,7 @@ export function ResumeEditorForm({
               </NextLinkButton>
             </Box>
           </Stack>
-        </Paper>
+        </AppCard>
       </Box>
     );
   }

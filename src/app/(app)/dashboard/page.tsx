@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import {
   DashboardApplicationsList,
   type DashboardApplicationRow,
@@ -9,6 +8,8 @@ import {
 import { DashboardStats } from "@/components/app/DashboardStats";
 import { OnboardingBanner } from "@/components/app/OnboardingBanner";
 import { NextLinkButton } from "@/components/NextLinkButton";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageSection } from "@/components/ui/PageSection";
 import {
   getCurrentStage,
   getLastStageEventAt,
@@ -16,6 +17,7 @@ import {
 } from "@/lib/application";
 import { requireUser } from "@/lib/auth";
 import { listResumes } from "@/lib/resume";
+import { appTokens } from "@/theme/tokens";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -54,35 +56,32 @@ export default async function DashboardPage() {
 
   return (
     <Box>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Dashboard
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Hi {greeting} — here is an overview of your job search.
-      </Typography>
+      <PageHeader
+        title="Dashboard"
+        subtitle={`Hi ${greeting} — here is an overview of your job search.`}
+      />
 
       <OnboardingBanner
         hasApplications={applications.length > 0}
         hasResume={hasResume}
       />
 
-      <Typography variant="h6" component="h2" gutterBottom>
-        Quick actions
-      </Typography>
-      <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ mb: 4 }}>
-        <NextLinkButton href="/applications/new" variant="contained">
-          Add application
-        </NextLinkButton>
-        <NextLinkButton href="/applications" variant="outlined">
-          View applications
-        </NextLinkButton>
-        <NextLinkButton href="/pipeline" variant="outlined">
-          Job tracker
-        </NextLinkButton>
-        <NextLinkButton href="/resume" variant="outlined">
-          Resume
-        </NextLinkButton>
-      </Stack>
+      <PageSection title="Quick actions" gap="large">
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={appTokens.quickActionsGap}>
+          <NextLinkButton href="/applications/new" variant="contained">
+            Add application
+          </NextLinkButton>
+          <NextLinkButton href="/applications" variant="outlined">
+            View applications
+          </NextLinkButton>
+          <NextLinkButton href="/pipeline" variant="outlined">
+            Job tracker
+          </NextLinkButton>
+          <NextLinkButton href="/resume" variant="outlined">
+            Resume
+          </NextLinkButton>
+        </Stack>
+      </PageSection>
 
       <DashboardStats
         applicationCount={applications.length}

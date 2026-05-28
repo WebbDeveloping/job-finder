@@ -44,7 +44,7 @@ const iframeSx = {
   width: "100%",
   height: "100%",
   border: 0,
-  bgcolor: "#fff",
+  bgcolor: "background.paper",
 } as const;
 
 /** Keeps the previous PDF visible while the next blob loads in a hidden iframe. */

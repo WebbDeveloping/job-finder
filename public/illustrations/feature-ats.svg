@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 400" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="ats-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#E3F2FD"/>
+    </linearGradient>
+    <filter id="ats-shadow" x="-8%" y="-8%" width="116%" height="120%">
+      <feDropShadow dx="0" dy="5" stdDeviation="10" flood-color="#1976D2" flood-opacity="0.14"/>
+    </filter>
+    <linearGradient id="ats-scan" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#66BB6A" stop-opacity="0"/>
+      <stop offset="45%" stop-color="#66BB6A" stop-opacity="0.15"/>
+      <stop offset="55%" stop-color="#66BB6A" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#66BB6A" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="520" height="400" rx="20" fill="url(#ats-bg)"/>
+  <rect x="40" y="328" width="440" height="48" rx="10" fill="#C8E6C9" opacity="0.5"/>
+  <!-- resume document -->
+  <g filter="url(#ats-shadow)">
+    <rect x="96" y="48" width="200" height="272" rx="14" fill="#fff" stroke="#1976D2" stroke-width="2"/>
+  </g>
+  <rect x="112" y="64" width="120" height="10" rx="5" fill="#1976D2" opacity="0.2"/>
+  <circle cx="152" cy="108" r="22" fill="#E3F2FD"/>
+  <rect x="112" y="140" width="168" height="6" rx="3" fill="#1976D2" opacity="0.35"/>
+  <rect x="112" y="156" width="152" height="5" rx="2.5" fill="#90CAF9"/>
+  <rect x="112" y="168" width="140" height="5" rx="2.5" fill="#BBDEFB"/>
+  <rect x="112" y="188" width="72" height="6" rx="3" fill="#1976D2" opacity="0.25"/>
+  <rect x="112" y="204" width="168" height="5" rx="2.5" fill="#E3F2FD"/>
+  <rect x="112" y="216" width="144" height="5" rx="2.5" fill="#E3F2FD"/>
+  <rect x="112" y="236" width="56" height="6" rx="3" fill="#1976D2" opacity="0.2"/>
+  <rect x="112" y="252" width="160" height="5" rx="2.5" fill="#BBDEFB"/>
+  <rect x="112" y="264" width="128" height="5" rx="2.5" fill="#BBDEFB"/>
+  <rect x="96" y="48" width="200" height="272" rx="14" fill="url(#ats-scan)"/>
+  <!-- parser beam -->
+  <line x1="96" y1="200" x2="296" y2="200" stroke="#66BB6A" stroke-width="2" stroke-dasharray="4 6" opacity="0.7"/>
+  <circle cx="296" cy="200" r="6" fill="#66BB6A"/>
+  <!-- checklist panel -->
+  <g filter="url(#ats-shadow)">
+    <rect x="320" y="72" width="168" height="216" rx="14" fill="#fff" stroke="#2E7D32" stroke-width="2"/>
+  </g>
+  <rect x="336" y="88" width="100" height="10" rx="5" fill="#2E7D32" opacity="0.2"/>
+  <text x="336" y="118" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#2E7D32">ATS scan</text>
+  <text x="336" y="134" font-family="system-ui,sans-serif" font-size="10" fill="#1976D2" opacity="0.65">All sections readable</text>
+  <!-- check rows -->
+  <g>
+    <circle cx="348" cy="164" r="12" fill="#E8F5E9" stroke="#66BB6A" stroke-width="1.5"/>
+    <path d="M343 164l3 3 7-8" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="368" y="168" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#37474F">Contact info</text>
+  </g>
+  <g>
+    <circle cx="348" cy="200" r="12" fill="#E8F5E9" stroke="#66BB6A" stroke-width="1.5"/>
+    <path d="M343 200l3 3 7-8" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="368" y="204" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#37474F">Experience</text>
+  </g>
+  <g>
+    <circle cx="348" cy="236" r="12" fill="#E8F5E9" stroke="#66BB6A" stroke-width="1.5"/>
+    <path d="M343 236l3 3 7-8" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="368" y="240" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#37474F">Skills</text>
+  </g>
+  <g>
+    <circle cx="348" cy="272" r="12" fill="#E8F5E9" stroke="#66BB6A" stroke-width="1.5"/>
+    <path d="M343 272l3 3 7-8" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="368" y="276" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#37474F">Education</text>
+  </g>
+  <!-- pass badge -->
+  <circle cx="448" cy="56" r="28" fill="#FFC107"/>
+  <path d="M438 56l6 6 14-14" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="336" y="296" width="120" height="28" rx="14" fill="#2E7D32"/>
+  <text x="356" y="315" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#fff">ATS-friendly</text>
+  <!-- shield -->
+  <path d="M196 312c0-20 24-36 24-36s24 16 24 36v8l-24 12-24-12v-8z" fill="#1976D2" opacity="0.12" stroke="#1976D2" stroke-width="1.5"/>
+  <path d="M208 322l6 6 12-14" stroke="#1976D2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

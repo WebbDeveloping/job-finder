@@ -4,9 +4,10 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { NextLinkButton } from "@/components/NextLinkButton";
 import MenuItem from "@mui/material/MenuItem";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
+import { AppCard } from "@/components/ui/AppCard";
+import { appTokens } from "@/theme/tokens";
 
 type SankeyFiltersProps = {
   sources: string[];
@@ -22,8 +23,9 @@ export function SankeyFilters({
   source,
 }: SankeyFiltersProps) {
   return (
-    <Paper component="form" method="get" variant="outlined" sx={{ p: 2 }}>
-      <Stack
+    <AppCard padding="toolbar" sx={{ mt: appTokens.pageHeaderGap }}>
+      <Box component="form" method="get">
+        <Stack
         direction={{ xs: "column", sm: "row" }}
         spacing={2}
         sx={{ alignItems: { sm: "flex-end" }, flexWrap: "wrap" }}
@@ -73,6 +75,7 @@ export function SankeyFilters({
           </NextLinkButton>
         </Box>
       </Stack>
-    </Paper>
+      </Box>
+    </AppCard>
   );
 }

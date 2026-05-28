@@ -27,6 +27,7 @@ export const authConfig = {
         pathname.startsWith("/applications") ||
         pathname.startsWith("/pipeline") ||
         pathname.startsWith("/resume") ||
+        pathname.startsWith("/profile") ||
         pathname.startsWith("/settings") ||
         pathname === "/api/resume/pdf";
 

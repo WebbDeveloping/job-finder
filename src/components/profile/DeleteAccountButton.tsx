@@ -10,7 +10,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import { deleteAccount } from "@/app/(app)/settings/actions";
+import { deleteAccount } from "@/app/(app)/profile/actions";
 
 const CONFIRM_TEXT = "DELETE";
 

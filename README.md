@@ -63,7 +63,7 @@ Open [http://localhost:3000](http://localhost:3000). Health: `GET /api/health`.
 - `/pipeline` — job application pipeline
 - `/pipeline/analytics` — Sankey flow
 - `/resume` — resume library (built resumes + PDF uploads)
-- `/settings` — profile and account
+- `/profile` — career profile and account (`/settings` redirects here)
 
 Full route map: [docs/PLAN.md](docs/PLAN.md).
 

@@ -30,6 +30,7 @@ import {
   RESUME_UPLOAD_MAX_BYTES,
   RESUME_UPLOAD_MIME,
 } from "@/lib/resume-constants";
+import { formatPhoneForDisplay } from "@/lib/phone-format";
 import type { ResumeProfileFormData } from "@/lib/resume-types";
 import { prisma } from "@/lib/prisma";
 
@@ -120,7 +121,7 @@ async function parseBuiltFormData(
   const data: ResumeProfileFormData = {
     fullName,
     email,
-    phone: trimOptional(formData.get("phone")),
+    phone: formatPhoneForDisplay(trimOptional(formData.get("phone"))) || null,
     location: trimOptional(formData.get("location")),
     website: trimOptional(formData.get("website")),
     linkedIn: trimOptional(formData.get("linkedIn")),

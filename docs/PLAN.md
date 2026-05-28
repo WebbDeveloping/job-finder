@@ -81,7 +81,8 @@ Terminals: `Rejection`, `No Reply`, `Replied too late`, `No task requested`, `Re
 | `/pipeline/new` | Authenticated | Create application |
 | `/pipeline/[id]` | Authenticated | Detail + stage history (owner only) |
 | `/resume` | Authenticated | Resume library (built + uploads); `?id=` / `?new=built` for editor |
-| `/settings` | Authenticated | Profile, delete account |
+| `/profile` | Authenticated | Career profile, account, delete account |
+| `/settings` | Authenticated | Redirects to `/profile` |
 | `/api/health` | Public | DB check |
 | `/api/auth/*` | Public | Auth.js handlers |
 | `/api/resume/pdf` | Authenticated | Resume PDF download (BUILT; Phase 13 adds `?resumeId=`) |
@@ -92,7 +93,7 @@ Terminals: `Rejection`, `No Reply`, `Replied too late`, `No task requested`, `Re
 |-------|--------|
 | `/resume/[id]` or `/resume?id=` | Authenticated (Phase 13) — edit a specific built resume |
 | `/api/resume/file/[id]` | Authenticated (Phase 13) — download uploaded PDF |
-| `/settings/billing` | Authenticated (Phase 11) |
+| `/profile` (Account tab) / `/settings/billing` (Phase 11) | Authenticated |
 | `/r/[slug]` | Public if resume published (Phase 10; targets `Resume`) |
 
 ## Agent chat guidance

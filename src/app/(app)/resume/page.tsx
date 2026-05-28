@@ -41,7 +41,7 @@ export default async function ResumePage() {
         sx={{
           mb: 4,
           justifyContent: "space-between",
-          alignItems: { sm: "flex-start" },
+          alignItems: { xs: "flex-start", sm: "center" },
         }}
       >
         <Box>
@@ -52,8 +52,10 @@ export default async function ResumePage() {
             Create built resumes, upload PDFs, and manage a default for downloads.
           </Typography>
         </Box>
+        <Box sx={{ alignSelf: { xs: "flex-end", sm: "auto" }, flexShrink: 0 }}>
+          <ResumePageActions />
+        </Box>
       </Stack>
-      <ResumePageActions />
 
       {resumes.length === 0 ? (
         <Paper

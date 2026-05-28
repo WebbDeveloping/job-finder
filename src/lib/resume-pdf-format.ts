@@ -3,6 +3,7 @@ import type {
   ResumeExperienceEntry,
   ResumeProfileFormData,
 } from "@/lib/resume-types";
+import { formatPhoneForDisplay } from "@/lib/phone-format";
 
 export function resumePdfFilename(fullName: string): string {
   const base = fullName.trim() || "resume";
@@ -44,7 +45,8 @@ export function formatExperienceHeader(entry: ResumeExperienceEntry): string {
 export function buildContactParts(data: ResumeProfileFormData): string[] {
   const parts: string[] = [];
   if (data.email.trim()) parts.push(data.email.trim());
-  if (data.phone?.trim()) parts.push(data.phone.trim());
+  const formattedPhone = formatPhoneForDisplay(data.phone);
+  if (formattedPhone) parts.push(formattedPhone);
   if (data.location?.trim()) parts.push(data.location.trim());
   return parts;
 }

@@ -3,8 +3,11 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { NextLinkButton } from "@/components/NextLinkButton";
 import { ResumeEditorForm } from "@/components/resume/ResumeEditorForm";
-import { ResumePageActions } from "@/components/resume/ResumePageActions";
-import { requireUserId } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
+import {
+  getOrSeedUserProfile,
+  mergeProfileIntoResumeDefaults,
+} from "@/lib/user-profile";
 import { assertTemplateId } from "@/lib/resume-templates/registry";
 import { getResume, isBuiltResume, toResumeDesign, toResumeFormData } from "@/lib/resume";
 import type { ResumeProfileFormData } from "@/lib/resume-types";
@@ -30,7 +33,8 @@ type ResumeCreatePageProps = {
 export default async function ResumeCreatePage({
   searchParams,
 }: ResumeCreatePageProps) {
-  const userId = await requireUserId();
+  const session = await requireUser();
+  const userId = session.user.id;
   const params = await searchParams;
   const editingId = params.id ?? null;
 
@@ -42,7 +46,29 @@ export default async function ResumeCreatePage({
     }
   }
 
-  const defaultValues = editorResume ? toResumeFormData(editorResume) : emptyDefaults;
+  const isNewResume = !editorResume;
+  let defaultValues = editorResume
+    ? toResumeFormData(editorResume)
+    : emptyDefaults;
+
+  let prefilledFromProfile = false;
+  if (isNewResume) {
+    const profile = await getOrSeedUserProfile(userId);
+    defaultValues = mergeProfileIntoResumeDefaults(
+      profile,
+      session.user.email ?? "",
+      emptyDefaults,
+    );
+    prefilledFromProfile =
+      profile.fullName.trim() !== "" ||
+      profile.email.trim() !== "" ||
+      profile.summary.trim() !== "" ||
+      profile.skills.trim() !== "" ||
+      profile.experience.length > 0 ||
+      profile.education.length > 0 ||
+      Boolean(profile.phone) ||
+      Boolean(profile.location);
+  }
 
   return (
     <Box>
@@ -51,7 +77,6 @@ export default async function ResumeCreatePage({
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
           sx={{
-            justifyContent: "space-between",
             alignItems: { xs: "flex-start", sm: "center" },
             mb: 1,
           }}
@@ -59,9 +84,6 @@ export default async function ResumeCreatePage({
           <Typography variant="h4" component="h1" sx={{ mb: 0 }}>
             {editingId ? "Edit resume" : "Create resume"}
           </Typography>
-          <Box sx={{ alignSelf: { xs: "flex-end", sm: "auto" }, flexShrink: 0 }}>
-            <ResumePageActions />
-          </Box>
         </Stack>
         <Typography variant="body2" color="text.secondary">
           Fill in each section and see your resume update live as you type.
@@ -89,6 +111,7 @@ export default async function ResumeCreatePage({
           defaultTheme={
             editorResume ? toResumeDesign(editorResume).theme : null
           }
+          prefilledFromProfile={prefilledFromProfile}
         />
       )}
     </Box>

@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import AddIcon from "@mui/icons-material/Add";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
@@ -29,6 +30,19 @@ const resumeSubItems = [
   { href: "/resume/upload", label: "Upload Resume", match: "resume-upload" as const },
 ] as const;
 
+const coverLetterSubItems = [
+  {
+    href: "/cover-letters",
+    label: "View Cover Letters",
+    match: "cover-letter-list" as const,
+  },
+  {
+    href: "/cover-letters/create",
+    label: "Create Cover Letter",
+    match: "cover-letter-create" as const,
+  },
+] as const;
+
 function isApplicationsSection(pathname: string): boolean {
   return pathname === "/applications" || pathname.startsWith("/applications/");
 }
@@ -39,6 +53,12 @@ function isJobTrackerSection(pathname: string): boolean {
 
 function isResumeSection(pathname: string): boolean {
   return pathname === "/resume" || pathname.startsWith("/resume/");
+}
+
+function isCoverLetterSection(pathname: string): boolean {
+  return (
+    pathname === "/cover-letters" || pathname.startsWith("/cover-letters/")
+  );
 }
 
 function isTopLevelActive(
@@ -67,6 +87,16 @@ function isResumeSubActive(
   return pathname === "/resume/upload";
 }
 
+function isCoverLetterSubActive(
+  pathname: string,
+  match: (typeof coverLetterSubItems)[number]["match"],
+): boolean {
+  if (match === "cover-letter-list") {
+    return pathname === "/cover-letters";
+  }
+  return pathname === "/cover-letters/create";
+}
+
 const listItemSx = {
   borderRadius: 1,
   mb: 0.5,
@@ -89,6 +119,7 @@ export function AppShellNav() {
   const pathname = usePathname();
   const jobTrackerOpen = isJobTrackerSection(pathname);
   const resumeOpen = isResumeSection(pathname);
+  const coverLetterOpen = isCoverLetterSection(pathname);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -174,6 +205,40 @@ export function AppShellNav() {
                     <UploadFileOutlinedIcon fontSize="small" />
                   ) : (
                     <DescriptionOutlinedIcon fontSize="small" />
+                  )}
+                </ListItemIcon>
+                <ListItemText primary={label} />
+              </ListItemButton>
+            ))}
+          </List>
+        </Collapse>
+
+        <ListItemButton
+          component={NextMuiLink}
+          href="/cover-letters"
+          selected={coverLetterOpen}
+          sx={listItemSx}
+        >
+          <ListItemIcon sx={{ minWidth: 40 }}>
+            <MailOutlineOutlinedIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary="Cover letters" />
+        </ListItemButton>
+        <Collapse in={coverLetterOpen} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding dense>
+            {coverLetterSubItems.map(({ href, label, match }) => (
+              <ListItemButton
+                key={href}
+                component={NextMuiLink}
+                href={href}
+                selected={isCoverLetterSubActive(pathname, match)}
+                sx={pipelineSubItemSx}
+              >
+                <ListItemIcon sx={{ minWidth: 32 }}>
+                  {match === "cover-letter-create" ? (
+                    <AddIcon fontSize="small" />
+                  ) : (
+                    <MailOutlineOutlinedIcon fontSize="small" />
                   )}
                 </ListItemIcon>
                 <ListItemText primary={label} />

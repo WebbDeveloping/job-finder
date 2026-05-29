@@ -25,10 +25,16 @@ export type ApplicationFormResumeOption = {
   kind: ResumeKind;
 };
 
+export type ApplicationFormCoverLetterOption = {
+  id: string;
+  label: string;
+};
+
 type ApplicationFormProps = {
   mode: "create" | "edit";
   applicationId?: string;
   resumes: ApplicationFormResumeOption[];
+  coverLetters: ApplicationFormCoverLetterOption[];
   defaultResumeId?: string | null;
   defaultValues?: {
     company: string;
@@ -38,6 +44,7 @@ type ApplicationFormProps = {
     salaryRange?: string;
     notes: string;
     resumeId?: string | null;
+    coverLetterId?: string | null;
   };
 };
 
@@ -47,6 +54,7 @@ export function ApplicationForm({
   mode,
   applicationId,
   resumes,
+  coverLetters,
   defaultResumeId,
   defaultValues,
 }: ApplicationFormProps) {
@@ -61,6 +69,9 @@ export function ApplicationForm({
     mode === "edit"
       ? (defaultValues?.resumeId ?? "")
       : (defaultResumeId ?? "");
+
+  const selectedCoverLetterId =
+    mode === "edit" ? (defaultValues?.coverLetterId ?? "") : "";
 
   return (
     <Stack component="form" action={formAction} spacing={2.5}>
@@ -130,6 +141,33 @@ export function ApplicationForm({
         <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
           <NextMuiLink href="/resume" underline="hover">
             Manage resumes
+          </NextMuiLink>
+        </Typography>
+      </FormControl>
+
+      <FormControl fullWidth>
+        <InputLabel id="cover-letter-used-label">
+          Cover letter (optional)
+        </InputLabel>
+        <Select
+          labelId="cover-letter-used-label"
+          id="coverLetterId"
+          name="coverLetterId"
+          label="Cover letter (optional)"
+          defaultValue={selectedCoverLetterId}
+        >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          {coverLetters.map((letter) => (
+            <MenuItem key={letter.id} value={letter.id}>
+              {letter.label}
+            </MenuItem>
+          ))}
+        </Select>
+        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+          <NextMuiLink href="/cover-letters" underline="hover">
+            Manage cover letters
           </NextMuiLink>
         </Typography>
       </FormControl>

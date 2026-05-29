@@ -6,6 +6,7 @@ import type { Stage } from "@/generated/prisma/client";
 import { getApplication, getCurrentStage } from "@/lib/application";
 import { requireUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { assertCoverLetterOwnedByUser } from "@/lib/cover-letter";
 import { assertResumeOwnedByUser } from "@/lib/resume";
 import { ALL_STAGES } from "@/lib/stages";
 
@@ -34,6 +35,17 @@ async function resolveResumeId(
   const owned = await assertResumeOwnedByUser(resumeId, userId);
   if ("error" in owned) return owned;
   return resumeId;
+}
+
+async function resolveCoverLetterId(
+  formData: FormData,
+  userId: string,
+): Promise<string | null | ActionState> {
+  const coverLetterId = parseResumeId(formData.get("coverLetterId"));
+  if (coverLetterId === null) return null;
+  const owned = await assertCoverLetterOwnedByUser(coverLetterId, userId);
+  if ("error" in owned) return owned;
+  return coverLetterId;
 }
 
 function requireField(
@@ -91,6 +103,11 @@ export async function createApplication(
   const resumeId = await resolveResumeId(formData, userId);
   if (typeof resumeId !== "string" && resumeId !== null) return resumeId;
 
+  const coverLetterId = await resolveCoverLetterId(formData, userId);
+  if (typeof coverLetterId !== "string" && coverLetterId !== null) {
+    return coverLetterId;
+  }
+
   const application = await prisma.application.create({
     data: {
       userId,
@@ -101,6 +118,7 @@ export async function createApplication(
       salaryRange,
       notes,
       resumeId,
+      coverLetterId,
       stageEvents: {
         create: {
           fromStage: null,
@@ -138,6 +156,11 @@ export async function updateApplication(
   const resumeId = await resolveResumeId(formData, userId);
   if (typeof resumeId !== "string" && resumeId !== null) return resumeId;
 
+  const coverLetterId = await resolveCoverLetterId(formData, userId);
+  if (typeof coverLetterId !== "string" && coverLetterId !== null) {
+    return coverLetterId;
+  }
+
   const existing = await getApplication(id, userId);
   if (!existing) {
     return { error: "Application not found." };
@@ -145,7 +168,16 @@ export async function updateApplication(
 
   await prisma.application.update({
     where: { id },
-    data: { company, role, source, companyWebsite, salaryRange, notes, resumeId },
+    data: {
+      company,
+      role,
+      source,
+      companyWebsite,
+      salaryRange,
+      notes,
+      resumeId,
+      coverLetterId,
+    },
   });
 
   revalidatePath("/applications");

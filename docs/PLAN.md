@@ -36,6 +36,8 @@ Track job applications (Sankey pipeline) and build a resume with PDF download. E
 | **12** | Pending | [phase-12-hardening](./phases/phase-12-hardening.md) | Sentry, email, backups, admin, export |
 | **13** | Done | [phase-13-resume-library](./phases/phase-13-resume-library.md) | Resume library: built + PDF upload, default resume |
 | **14** | Done | [phase-14-application-resume](./phases/phase-14-application-resume.md) | Select resume per job application |
+| **15** | Done | [phase-15-cover-letter-library](./phases/phase-15-cover-letter-library.md) | Cover letter library, editor, PDF export |
+| **16** | Done | [phase-16-application-cover-letter](./phases/phase-16-application-cover-letter.md) | Select cover letter per job application |
 
 **Recommended order:** Complete **Phase 13** (and **14** if tracking per job) **before Phase 10** so public sharing uses the `Resume` model instead of legacy `ResumeProfile`.
 
@@ -86,6 +88,9 @@ Terminals: `Rejection`, `No Reply`, `Replied too late`, `No task requested`, `Re
 | `/api/health` | Public | DB check |
 | `/api/auth/*` | Public | Auth.js handlers |
 | `/api/resume/pdf` | Authenticated | Resume PDF download (BUILT; Phase 13 adds `?resumeId=`) |
+| `/cover-letters` | Authenticated | Cover letter library |
+| `/cover-letters/create` | Authenticated | Cover letter editor (`?id=`, `?applicationId=`) |
+| `/api/cover-letter/pdf` | Authenticated | Cover letter PDF download (`?coverLetterId=`) |
 
 ### Routes (future SaaS phases)
 

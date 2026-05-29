@@ -1,5 +1,6 @@
 import type {
   Application,
+  CoverLetter,
   Resume,
   Stage,
   StageEvent,
@@ -10,6 +11,7 @@ import { isTerminalStage } from "@/lib/stages";
 export type ApplicationWithEvents = Application & {
   stageEvents: StageEvent[];
   resume: Resume | null;
+  coverLetter: CoverLetter | null;
 };
 
 /** Most recently logged transition (createdAt), not the latest backdated "when" value. */
@@ -38,7 +40,7 @@ export async function listApplications(
 ): Promise<ApplicationWithEvents[]> {
   return prisma.application.findMany({
     where: { userId },
-    include: { stageEvents: true, resume: true },
+    include: { stageEvents: true, resume: true, coverLetter: true },
     orderBy: { updatedAt: "desc" },
   });
 }
@@ -49,6 +51,6 @@ export async function getApplication(
 ): Promise<ApplicationWithEvents | null> {
   return prisma.application.findFirst({
     where: { id, userId },
-    include: { stageEvents: true, resume: true },
+    include: { stageEvents: true, resume: true, coverLetter: true },
   });
 }

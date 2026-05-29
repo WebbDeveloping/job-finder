@@ -44,9 +44,10 @@ model User {
 
   accounts      Account[]
   sessions      Session[]
-  applications Application[]
-  resumes      Resume[]
-  userProfile  UserProfile?
+  applications  Application[]
+  resumes       Resume[]
+  coverLetters  CoverLetter[]
+  userProfile   UserProfile?
 }
 
 model UserProfile {
@@ -113,14 +114,47 @@ model Application {
   notes       String?
   companyWebsite String?
   salaryRange     String?
-  resumeId    String?
-  resume      Resume?      @relation(fields: [resumeId], references: [id], onDelete: SetNull)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  stageEvents StageEvent[]
+  resumeId        String?
+  resume          Resume?       @relation(fields: [resumeId], references: [id], onDelete: SetNull)
+  coverLetterId   String?
+  coverLetter     CoverLetter?  @relation(fields: [coverLetterId], references: [id], onDelete: SetNull)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  stageEvents     StageEvent[]
 
   @@index([userId])
   @@index([resumeId])
+  @@index([coverLetterId])
+}
+
+model CoverLetter {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String
+
+  fullName  String   @default("")
+  email     String   @default("")
+  phone     String?
+  location  String?
+
+  letterDate      String?
+  recipientName   String?
+  recipientTitle  String?
+  company         String?
+  companyAddress  String?  @db.Text
+
+  salutation String @default("Dear Hiring Manager,")
+  body       String @default("") @db.Text
+  closing    String @default("Sincerely,")
+  theme      Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  applications Application[]
+
+  @@index([userId])
 }
 
 model StageEvent {

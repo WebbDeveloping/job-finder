@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { ApplicationForm } from "@/components/pipeline/ApplicationForm";
+import { ApplicationCoverLetterSection } from "@/components/pipeline/ApplicationCoverLetterSection";
 import { ApplicationResumeSection } from "@/components/pipeline/ApplicationResumeSection";
 import { DeleteApplicationButton } from "@/components/pipeline/DeleteApplicationButton";
 import { StageChangeForm } from "@/components/pipeline/StageChangeForm";
@@ -13,6 +14,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { PageSection } from "@/components/ui/PageSection";
 import { getApplication, getCurrentStage } from "@/lib/application";
 import { requireUserId } from "@/lib/auth";
+import { listCoverLetters } from "@/lib/cover-letter";
 import { listResumes } from "@/lib/resume";
 
 type PageProps = {
@@ -24,9 +26,10 @@ export const dynamic = "force-dynamic";
 export default async function ApplicationDetailPage({ params }: PageProps) {
   const userId = await requireUserId();
   const { id } = await params;
-  const [application, resumes] = await Promise.all([
+  const [application, resumes, coverLetters] = await Promise.all([
     getApplication(id, userId),
     listResumes(userId),
+    listCoverLetters(userId),
   ]);
 
   if (!application) {
@@ -38,6 +41,11 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
     id: resume.id,
     label: resume.label,
     kind: resume.kind,
+  }));
+
+  const coverLetterOptions = coverLetters.map((letter) => ({
+    id: letter.id,
+    label: letter.label,
   }));
 
   const metaLines = [
@@ -82,6 +90,22 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
         </FormColumn>
       </PageSection>
 
+      <PageSection title="Cover letter">
+        <FormColumn>
+          <ApplicationCoverLetterSection
+            applicationId={application.id}
+            coverLetter={
+              application.coverLetter
+                ? {
+                    id: application.coverLetter.id,
+                    label: application.coverLetter.label,
+                  }
+                : null
+            }
+          />
+        </FormColumn>
+      </PageSection>
+
       <Grid container spacing={4}>
         <Grid size={{ xs: 12, lg: 6 }}>
           <PageSection title="Application details">
@@ -90,6 +114,7 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
                 mode="edit"
                 applicationId={application.id}
                 resumes={resumeOptions}
+                coverLetters={coverLetterOptions}
                 defaultValues={{
                   company: application.company,
                   role: application.role,
@@ -98,6 +123,7 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
                   salaryRange: application.salaryRange ?? "",
                   notes: application.notes ?? "",
                   resumeId: application.resumeId,
+                  coverLetterId: application.coverLetterId,
                 }}
               />
             </FormColumn>

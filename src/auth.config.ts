@@ -27,9 +27,11 @@ export const authConfig = {
         pathname.startsWith("/applications") ||
         pathname.startsWith("/pipeline") ||
         pathname.startsWith("/resume") ||
+        pathname.startsWith("/cover-letters") ||
         pathname.startsWith("/profile") ||
         pathname.startsWith("/settings") ||
-        pathname === "/api/resume/pdf";
+        pathname === "/api/resume/pdf" ||
+        pathname === "/api/cover-letter/pdf";
 
       if (!isLoggedIn && isProtected && !isPublicApi) {
         const loginUrl = new URL("/login", nextUrl);

@@ -5,7 +5,10 @@ import {
   DashboardApplicationsList,
   type DashboardApplicationRow,
 } from "@/components/app/DashboardApplicationsList";
-import { DashboardStats } from "@/components/app/DashboardStats";
+import {
+  DashboardDocumentsList,
+  type DashboardDocumentRow,
+} from "@/components/app/DashboardDocumentsList";
 import { OnboardingBanner } from "@/components/app/OnboardingBanner";
 import { NextLinkButton } from "@/components/NextLinkButton";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -16,6 +19,7 @@ import {
   listApplications,
 } from "@/lib/application";
 import { requireUser } from "@/lib/auth";
+import { listCoverLetters } from "@/lib/cover-letter";
 import { listResumes } from "@/lib/resume";
 import { appTokens } from "@/theme/tokens";
 
@@ -45,14 +49,37 @@ function toDashboardRows(
 export default async function DashboardPage() {
   const session = await requireUser();
   const userId = session.user.id!;
-  const [applications, resumes] = await Promise.all([
+  const [applications, resumes, coverLetters] = await Promise.all([
     listApplications(userId),
     listResumes(userId),
+    listCoverLetters(userId),
   ]);
   const hasResume = resumes.length > 0;
 
   const greeting = session.user.name?.split(" ")[0] ?? "there";
   const applicationRows = toDashboardRows(applications);
+
+  const documentRows: DashboardDocumentRow[] = [
+    ...resumes.map((resume) => ({
+      id: resume.id,
+      label: resume.label,
+      kind: "resume" as const,
+      resumeKind: resume.kind,
+      isDefault: resume.isDefault,
+      updatedAt: resume.updatedAt.toISOString(),
+      href:
+        resume.kind === "BUILT"
+          ? `/resume/create?id=${resume.id}`
+          : "/resume",
+    })),
+    ...coverLetters.map((letter) => ({
+      id: letter.id,
+      label: letter.label,
+      kind: "cover-letter" as const,
+      updatedAt: letter.updatedAt.toISOString(),
+      href: `/cover-letters/create?id=${letter.id}`,
+    })),
+  ];
 
   return (
     <Box>
@@ -66,7 +93,7 @@ export default async function DashboardPage() {
         hasResume={hasResume}
       />
 
-      <PageSection title="Quick actions" gap="large">
+      <PageSection title="Quick links" gap="large">
         <Stack direction={{ xs: "column", sm: "row" }} spacing={appTokens.quickActionsGap}>
           <NextLinkButton href="/applications/new" variant="contained">
             Add application
@@ -80,15 +107,15 @@ export default async function DashboardPage() {
           <NextLinkButton href="/resume" variant="outlined">
             Resume
           </NextLinkButton>
+          <NextLinkButton href="/cover-letters" variant="outlined">
+            Cover letters
+          </NextLinkButton>
         </Stack>
       </PageSection>
 
-      <DashboardStats
-        applicationCount={applications.length}
-        hasResume={hasResume}
-      />
-
       <DashboardApplicationsList applications={applicationRows} />
+
+      <DashboardDocumentsList documents={documentRows} />
     </Box>
   );
 }
